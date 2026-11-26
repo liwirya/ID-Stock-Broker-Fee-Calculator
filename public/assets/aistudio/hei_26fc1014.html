@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Fee Saham BEI — Terverifikasi OJK, KPEI & KSEI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas: #F4F0EA;
+      --bg-card: #FFFFFF;
+      --border-ink: #111111;
+      --accent-yellow: #FFDE59;
+      --accent-green: #4ADE80;
+      --accent-blue: #60A5FA;
+      --accent-pink: #FF6B6B;
+      --accent-purple: #C084FC;
+      --accent-orange: #FB923C;
+      --shadow-hard: 5px 5px 0px #111111;
+      --shadow-sm: 3px 3px 0px #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      background-image: radial-gradient(#111111 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--border-ink);
+      padding: 24px 16px 60px;
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      background: var(--accent-yellow);
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-hard);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .header-tag {
+      display: inline-block;
+      background: var(--border-ink);
+      color: #FFFFFF;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .header h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+    .header h1 span {
+      background: var(--accent-green);
+      padding: 0 6px;
+      border: 2px solid var(--border-ink);
+      display: inline-block;
+      transform: rotate(-1.5deg);
+    }
+    .header p {
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+
+    /* Info Badges */
+    .badges {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .badge-box {
+      background: var(--bg-card);
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-sm);
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .badge-box:nth-child(1) { background: var(--accent-blue); }
+    .badge-box:nth-child(2) { background: var(--accent-purple); }
+    .badge-box:nth-child(3) { background: var(--accent-orange); }
+    .badge-box .val {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .badge-box .lbl {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-hard);
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--border-ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .market-pill {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      background: var(--accent-yellow);
+      border: 2px solid var(--border-ink);
+      padding: 2px 8px;
+      font-weight: 700;
+    }
+    .section-sub {
+      display: inline-block;
+      background: var(--border-ink);
+      color: #FFFFFF;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      margin: 12px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Info Box */
+    .info-box {
+      background: #EFF6FF;
+      border: 2px solid var(--border-ink);
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .broker-note {
+      background: #FEF9C3;
+      border: 2px solid var(--border-ink);
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      background: #FFFFFF;
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-sm);
+      color: var(--border-ink);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.92rem;
+      font-weight: 700;
+      outline: none;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    select {
+      font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer;
+    }
+    input[type="number"]:focus,
+    select:focus {
+      background: #FEF9C3;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px var(--border-ink);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0 18px;
+      padding: 10px 12px;
+      background: #F8FAFC;
+      border: 2px solid var(--border-ink);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .checkbox-group input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--border-ink);
+      cursor: pointer;
+    }
+
+    /* Stale Warning */
+    .stale-banner {
+      display: none;
+      background: var(--accent-orange);
+      border: 2px solid var(--border-ink);
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-hard);
+      background: var(--accent-green);
+      color: var(--border-ink);
+      font-weight: 800;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-primary:hover {
+      background: #22C55E;
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0px var(--border-ink);
+    }
+    .btn-primary:active {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0px var(--border-ink);
+    }
+
+    .btn-secondary-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn-secondary {
+      padding: 10px;
+      background: var(--accent-yellow);
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-sm);
+      color: var(--border-ink);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-secondary:last-child {
+      background: #FFFFFF;
+    }
+    .btn-secondary:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px var(--border-ink);
+    }
+    .btn-secondary:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px var(--border-ink);
+    }
+
+    /* Result Section Hidden by Default */
+    #resultSection {
+      display: none;
+    }
+    #resultSection.visible {
+      display: block;
+      animation: popIn 0.25s ease-out;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Result Box */
+    .profit-highlight {
+      background: var(--accent-green);
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-sm);
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .profit-highlight.loss-box {
+      background: var(--accent-pink);
+    }
+    .profit-highlight .lbl {
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .profit-highlight .amount {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.95rem;
+      font-weight: 700;
+      margin: 6px 0;
+    }
+    .profit-highlight .pct {
+      display: inline-block;
+      background: var(--border-ink);
+      color: #FFFFFF;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 2px 10px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .summary-box {
+      background: #FFFFFF;
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-sm);
+      padding: 12px;
+      text-align: center;
+    }
+    .summary-box:last-child {
+      background: var(--accent-yellow);
+    }
+    .summary-box .lbl {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .summary-box .val {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    /* Breakdown Table */
+    .breakdown-group-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: var(--border-ink);
+      color: #FFFFFF;
+      padding: 3px 8px;
+      margin: 14px 0 6px;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 2px dashed var(--border-ink);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .breakdown-row span:last-child {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+    }
+    .breakdown-row.bep-row {
+      background: #DBEAFE;
+      padding: 10px 8px;
+      margin: 10px -8px 4px;
+      border: 2px solid var(--border-ink);
+    }
+    .breakdown-row.total-row {
+      border-bottom: none;
+      background: var(--accent-yellow);
+      border: 3px solid var(--border-ink);
+      padding: 12px 10px;
+      margin-top: 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+    }
+
+    .note-box {
+      background: #FFFFFF;
+      border: 3px solid var(--border-ink);
+      box-shadow: var(--shadow-sm);
+      padding: 14px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .note-box strong {
+      background: var(--accent-yellow);
+      padding: 1px 5px;
+      border: 1.5px solid var(--border-ink);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">OJK • BEI • KPEI • KSEI COMPLIANT</div>
+    <h1>Kalkulator <span>Fee Saham</span></h1>
+    <p>Perhitungan presisi Trade Confirmation bursa: memecah otomatis komisi broker, Levy BEI/KSEI, kliring KPEI, PPN, PPh Final 0.1%, & e-Meterai.</p>
+  </div>
+
+  <!-- Badges -->
+  <div class="badges">
+    <div class="badge-box">
+      <div class="val">30+ AB</div>
+      <div class="lbl">Broker Aktif OJK</div>
+    </div>
+    <div class="badge-box">
+      <div class="val">0.0433%</div>
+      <div class="lbl">Levy BEI+KPEI+KSEI</div>
+    </div>
+    <div class="badge-box">
+      <div class="val">0.10%</div>
+      <div class="lbl">PPh Final Jual</div>
+    </div>
+  </div>
+
+  <!-- Input Card -->
+  <div class="card">
+    <div class="card-title">
+      <span>1. Parameter Transaksi</span>
+      <span class="market-pill" id="marketBadge">PASAR REGULER (RG)</span>
+    </div>
+
+    <div class="section-sub">Jenis Pasar / Transaksi BEI</div>
+    <div class="form-group">
+      <label for="txType">Pilih Jenis Transaksi</label>
+      <select id="txType">
+        <option value="regular">Pasar Reguler (Regular Market - RG | T+2)</option>
+        <option value="nego">Pasar Negosiasi (Negotiated Market - NG | Satuan Lembar)</option>
+        <option value="tunai">Pasar Tunai (Cash Market - TN | Settlement T+0)</option>
+        <option value="daytrade">Day Trade / Intraday (Beli & Jual Hari Sama)</option>
+        <option value="ipo">Transaksi e-IPO (Beli Pasar Perdana → Jual Reguler)</option>
+      </select>
+    </div>
+
+    <div class="info-box" id="marketDescBox">
+      <strong>Pasar Reguler (RG):</strong> Satuan Lot (1 Lot = 100 lembar), settlement T+2, berlaku Levy BEI+KSEI 0,03%, KPEI 0,01%, PPN Levy 0,0033%, PPN Komisi, dan PPh Final jual 0,1%.
+    </div>
+
+    <div class="section-sub">Detail Harga & Volume</div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="buyPrice">Harga Beli (IDR)</label>
+        <input type="number" id="buyPrice" value="1000" min="1" />
+      </div>
+      <div class="form-group">
+        <label for="sellPrice">Harga Jual (IDR)</label>
+        <input type="number" id="sellPrice" value="1100" min="1" />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="volumeInput" id="lblVolume">Jumlah Lot (1 Lot = 100 lbr)</label>
+        <input type="number" id="volumeInput" value="10" min="1" />
+      </div>
+      <div class="form-group">
+        <label for="totalSharesPreview">Total Lembar Saham</label>
+        <input type="number" id="totalSharesPreview" value="1000" disabled style="background:#E2E8F0; cursor:not-allowed;" />
+      </div>
+    </div>
+
+    <div class="section-sub">Sekuritas Anggota Bursa (OJK)</div>
+    <div class="form-group">
+      <label for="brokerSelect">Pilih Broker (Kode AB)</label>
+      <select id="brokerSelect"></select>
+    </div>
+
+    <div class="broker-note" id="brokerNoteBox">
+      Tarif All-In (sudah termasuk Levy 0.0433%, PPN, & PPh 0.1%)
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="buyFeePct" id="lblBuyFee">Total Fee Beli (%)</label>
+        <input type="number" id="buyFeePct" step="0.0001" value="0.15" />
+      </div>
+      <div class="form-group">
+        <label for="sellFeePct" id="lblSellFee">Total Fee Jual (%)</label>
+        <input type="number" id="sellFeePct" step="0.0001" value="0.25" />
+      </div>
+    </div>
+
+    <label class="checkbox-group" for="includeStamp">
+      <input type="checkbox" id="includeStamp" checked />
+      <span>Include e-Meterai Rp 10.000 (Akumulasi Transaksi &gt; Rp 10 Juta / Hari)</span>
+    </label>
+
+    <div class="stale-banner" id="staleBanner">
+      ⚠️ Parameter diubah — Tekan tombol di bawah untuk menghitung ulang
+    </div>
+
+    <button class="btn-primary" id="btnCalculate">Hitung Biaya & Profit →</button>
+
+    <div class="btn-secondary-group">
+      <button class="btn-secondary" id="btnExample">Contoh: BBCA 10 Lot</button>
+      <button class="btn-secondary" id="btnReset">Reset Form</button>
+    </div>
+  </div>
+
+  <!-- Result Wrapper (Hidden until button clicked) -->
+  <div id="resultSection">
+    <!-- Result Card -->
+    <div class="card">
+      <div class="card-title">
+        <span>2. Hasil Net RDN</span>
+        <span class="market-pill" id="resMarketTag">RG • T+2</span>
+      </div>
+
+      <div class="profit-highlight" id="profitHighlightBox">
+        <div class="lbl">Profit / Loss Bersih (Net Masuk RDN)</div>
+        <div class="amount" id="resNetProfit">Rp 0</div>
+        <div class="pct" id="resNetPct">0.00%</div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="lbl">Profit Kotor (Gross)</div>
+          <div class="val" id="resGrossProfit">Rp 0</div>
+        </div>
+        <div class="summary-box">
+          <div class="lbl">Total Potongan</div>
+          <div class="val" id="resTotalCost">Rp 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown Card -->
+    <div class="card">
+      <div class="card-title">3. Rincian Trade Confirmation</div>
+
+      <div class="breakdown-group-title">Nilai Transaksi</div>
+      <div class="breakdown-row">
+        <span>Total Nilai Beli Bruto</span>
+        <span id="detBuyVal">Rp 0</span>
+      </div>
+      <div class="breakdown-row">
+        <span>Total Nilai Jual Bruto</span>
+        <span id="detSellVal">Rp 0</span>
+      </div>
+
+      <div class="breakdown-group-title">Komisi Sekuritas (Anggota Bursa)</div>
+      <div class="breakdown-row">
+        <span id="lblDetBuyFee">Komisi Murni Broker (Beli)</span>
+        <span id="detBuyFee">Rp 0</span>
+      </div>
+      <div class="breakdown-row">
+        <span id="lblDetSellFee">Komisi Murni Broker (Jual)</span>
+        <span id="detSellFee">Rp 0</span>
+      </div>
+      <div class="breakdown-row">
+        <span>PPN atas Komisi Broker (PMK 131/2024)</span>
+        <span id="detBrokerVat">Rp 0</span>
+      </div>
+
+      <div class="breakdown-group-title">Pungutan Regulator (BEI, KPEI, KSEI) & Pajak</div>
+      <div class="breakdown-row">
+        <span id="lblDetLevyBei">Levy BEI & Jasa KSEI (0.03%)</span>
+        <span id="detLevyBei">Rp 0</span>
+      </div>
+      <div class="breakdown-row">
+        <span id="lblDetKpei">Biaya Kliring KPEI (0.01%)</span>
+        <span id="detKpei">Rp 0</span>
+      </div>
+      <div class="breakdown-row">
+        <span>PPN atas Levy BEI/KSEI (11%)</span>
+        <span id="detLevyVat">Rp 0</span>
+      </div>
+      <div class="breakdown-row">
+        <span>PPh Final Penjualan (0.10% Nilai Jual)</span>
+        <span id="detPph">Rp 0</span>
+      </div>
+      <div class="breakdown-row">
+        <span id="lblDetStamp">e-Meterai (PMK 134/2021)</span>
+        <span id="detStamp">Rp 0</span>
+      </div>
+
+      <div class="breakdown-row bep-row">
+        <span>Harga Breakeven (BEP) / Lembar</span>
+        <span id="detBep">Rp 0</span>
+      </div>
+      <div class="breakdown-row total-row">
+        <span>Total Semua Biaya & Pajak</span>
+        <span id="detTotalFee">Rp 0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>Transparansi Perhitungan:</strong> Tarif standar sekuritas ritel di Indonesia (misal <code>0.15% / 0.25%</code>) bersifat <strong>All-In</strong>, artinya sudah mencakup Levy BEI+KSEI (<code>0.03%</code>), KPEI (<code>0.01%</code>), PPN Levy (<code>0.0033%</code>), PPN Komisi, dan PPh Final jual (<code>0.10%</code>). Kalkulator ini memecah komponen tersebut secara akurat tanpa menghitung ganda.
+  </div>
+</div>
+
+<script>
+  const BROKERS = [
+    // === TOP RETAIL & DIGITAL BROKERS ===
+    {
+      id: "stockbit",
+      code: "XL",
+      name: "Stockbit Sekuritas Digital (XL) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: true, buy: 0.15, sell: 0.25, extraFee: 0 },
+      notes: "Tarif All-In (sudah termasuk Levy 0.0433%, PPN, & PPh 0.1%)"
+    },
+    {
+      id: "ajaib",
+      code: "XC",
+      name: "Ajaib Sekuritas Asia (XC) — 0.1513% / 0.2513%",
+      buy: 0.1513,
+      sell: 0.2513,
+      feeMode: "all_in",
+      dayTrade: { available: true, buy: 0.1513, sell: 0.2513, extraFee: 0 },
+      notes: "Tarif All-In sesuai penyesuaian PPN PMK 131/2024 (+0.1% jika Market Order)"
+    },
+    {
+      id: "mirae",
+      code: "YP",
+      name: "Mirae Asset Sekuritas (YP) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: true, buy: 0.08, sell: 0.18, extraFee: 0 },
+      notes: "Akun Reguler 0.15%/0.25%; Akun Khusus Day Trade otomatis 0.08%/0.18%"
+    },
+    {
+      id: "ipot",
+      code: "PD",
+      name: "Indo Premier Sekuritas / IPOT (PD) — 0.19% / 0.29%",
+      buy: 0.19,
+      sell: 0.29,
+      feeMode: "all_in",
+      dayTrade: { available: true, buy: 0.19, sell: 0.29, extraFee: 0 },
+      notes: "Tarif All-In Online Trading IPOT"
+    },
+    {
+      id: "pluang_plu",
+      code: "PLU",
+      name: "Pluang Saham ID (Mitra AB) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In terintegrasi Anggota Bursa berizin OJK"
+    },
+
+    // === BUMN / BANK-BACKED SEKURITAS ===
+    {
+      id: "mandiri",
+      code: "CC",
+      name: "Mandiri Sekuritas / MOST (CC) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      minimumFee: 5000,
+      minimumFeePeriod: "daily",
+      dayTrade: { available: true, buy: 0.10, sell: 0.20, extraFee: 0 },
+      notes: "Berlaku minimum fee komisi Rp 5.000/hari untuk akun reguler tertentu"
+    },
+    {
+      id: "bni",
+      code: "NI",
+      name: "BNI Sekuritas / BIONS (NI) — 0.17% / 0.27%",
+      buy: 0.17,
+      sell: 0.27,
+      feeMode: "all_in",
+      dayTrade: { available: true, buy: 0.12, sell: 0.22, extraFee: 0 },
+      notes: "Tarif All-In BIONS Online"
+    },
+    {
+      id: "bri",
+      code: "OD",
+      name: "BRI Danareksa / BRIGHTS (OD) — 0.17% / 0.27%",
+      buy: 0.17,
+      sell: 0.27,
+      feeMode: "all_in",
+      dayTrade: { available: true, buy: 0.17, sell: 0.27, extraFee: 0 },
+      notes: "Tarif All-In BRIGHTS Online"
+    },
+    {
+      id: "bca",
+      code: "SQ",
+      name: "BCA Sekuritas / BEST (SQ) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In BEST Online Trading"
+    },
+    {
+      id: "bahana",
+      code: "DX",
+      name: "Bahana Sekuritas / DX Trade (DX) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif standar online trading BUMN"
+    },
+
+    // === SEKURITAS SWASTA & ASING POPULER ===
+    {
+      id: "kisi",
+      code: "BQ",
+      name: "Korea Investment & Sekuritas / KISI (BQ) — 0.13% / 0.23%",
+      buy: 0.13,
+      sell: 0.23,
+      feeMode: "all_in",
+      promotional: true,
+      dayTrade: { available: true, buy: 0.13, sell: 0.23, extraFee: 0 },
+      notes: "Aplikasi KOINS / iKISI"
+    },
+    {
+      id: "sinarmas",
+      code: "DH",
+      name: "Sinarmas Sekuritas / SimInvest (DH) — 0.14% / 0.24%",
+      buy: 0.14,
+      sell: 0.24,
+      feeMode: "all_in",
+      dayTrade: { available: true, buy: 0.125, sell: 0.225, extraFee: 0 },
+      notes: "Aplikasi SimInvest"
+    },
+    {
+      id: "kbvalbury",
+      code: "CP",
+      name: "KB Valbury Sekuritas (CP) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In Online Trading"
+    },
+    {
+      id: "cgs",
+      code: "YU",
+      name: "CGS International Sekuritas (YU) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In CGS iTrade"
+    },
+    {
+      id: "trimegah",
+      code: "LG",
+      name: "Trimegah Sekuritas Indonesia (LG) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In Online Trading"
+    },
+    {
+      id: "panin",
+      code: "GR",
+      name: "Panin Sekuritas / POST (GR) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In POST Online"
+    },
+    {
+      id: "phillip",
+      code: "KK",
+      name: "Phillip Sekuritas / POEMS (KK) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In POEMS ID"
+    },
+    {
+      id: "henan",
+      code: "HP",
+      name: "Henan Putihrai Sekuritas / HPX (HP) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In HPX Online"
+    },
+    {
+      id: "sucor",
+      code: "AZ",
+      name: "Sucor Sekuritas / SPOT (AZ) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In SPOT"
+    },
+    {
+      id: "rhb",
+      code: "DR",
+      name: "RHB Sekuritas / TradeSmart (DR) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In RHB TradeSmart"
+    },
+    {
+      id: "samuel",
+      code: "IF",
+      name: "Samuel Sekuritas / STAR (IF) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In STAR Online"
+    },
+    {
+      id: "mnc",
+      code: "EP",
+      name: "MNC Sekuritas / MotionTrade (EP) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In MotionTrade"
+    },
+    {
+      id: "phintraco",
+      code: "AT",
+      name: "Phintraco Sekuritas / Profits (AT) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In Profits Anywhere"
+    },
+    {
+      id: "pancaglobal",
+      code: "PG",
+      name: "Panca Global Sekuritas / Hei5 (PG) — 0.10% / 0.20%",
+      buy: 0.10,
+      sell: 0.20,
+      feeMode: "all_in",
+      promotional: true,
+      dayTrade: { available: false },
+      notes: "Tarif All-In Aplikasi Hei5"
+    },
+    {
+      id: "nhkorindo",
+      code: "XA",
+      name: "NH Korindo Sekuritas (XA) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In Online Trading"
+    },
+    {
+      id: "kiwoom",
+      code: "AG",
+      name: "Kiwoom Sekuritas / HERO (AG) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In HERO"
+    },
+    {
+      id: "yuanta",
+      code: "FS",
+      name: "Yuanta Sekuritas / YSinvest (FS) — 0.15% / 0.25%",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In YSinvest"
+    },
+    {
+      id: "uob",
+      code: "AI",
+      name: "UOB Kay Hian Sekuritas (AI) — 0.25% / 0.35%",
+      buy: 0.25,
+      sell: 0.35,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In UTRADE"
+    },
+    {
+      id: "ciptadana",
+      code: "KI",
+      name: "Ciptadana Sekuritas Asia (KI) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In Online"
+    },
+    {
+      id: "maybank",
+      code: "ZP",
+      name: "Maybank Sekuritas Indonesia (ZP) — 0.18% / 0.28%",
+      buy: 0.18,
+      sell: 0.28,
+      feeMode: "all_in",
+      dayTrade: { available: false },
+      notes: "Tarif All-In Maybank Trade ID"
+    },
+
+    // === MODE CUSTOM ===
+    {
+      id: "custom_all_in",
+      code: "CST",
+      name: "Custom — Tarif All-In (Sudah termasuk Pajak & Levy)",
+      buy: 0.15,
+      sell: 0.25,
+      feeMode: "all_in",
+      dayTrade: { available: true },
+      notes: "Input total tarif All-In (termasuk pajak & levy bursa)"
+    },
+    {
+      id: "custom_base",
+      code: "BASE",
+      name: "Custom — Base Fee Murni (+ Levy 0.0433%, PPN, & PPh 0.1%)",
+      buy: 0.10,
+      sell: 0.10,
+      feeMode: "base_fee",
+      dayTrade: { available: true },
+      notes: "Input komisi murni broker; biaya BEI, KPEI, KSEI, PPN, & PPh akan ditambahkan otomatis"
+    }
+  ];
+
+  // Konstanta Resmi Regulator (BEI, KPEI, KSEI, Dirjen Pajak)
+  const REG_RATES = {
+    levyBeiKsei: 0.0003,   // 0.03% (BEI + KSEI)
+    kpeiRegular: 0.0001,   // 0.01% (Kliring KPEI Reguler/Tunai)
+    kpeiNego: 0.00009,     // 0.009% (Kliring KPEI Pasar Negosiasi SKB 2026)
+    vatEffective: 0.11,    // 11% efektif atas jasa keuangan (PMK 131/2024)
+    pphFinal: 0.001,       // 0.10% PPh Pasal 4(2) atas Nilai Jual
+    stampDuty: 10000       // Rp 10.000 e-Meterai (> Rp 10 Juta / hari)
+  };
+
+  // Konfigurasi Tiap Jenis Pasar Saham BEI
+  const MARKET_RULES = {
+    regular: {
+      badge: "PASAR REGULER (RG)",
+      resTag: "RG • T+2",
+      desc: "<strong>Pasar Reguler (RG):</strong> Satuan Lot (1 Lot = 100 lembar), settlement T+2, berlaku fraksi harga BEI, Levy BEI+KSEI 0,03%, KPEI 0,01%, PPN Levy 0,0033%, PPN Komisi, dan PPh Final jual 0,1%.",
+      unitMode: "lot",
+      volLabel: "Jumlah Lot (1 Lot = 100 lbr)",
+      kpeiRate: REG_RATES.kpeiRegular,
+      freeBuy: false
+    },
+    nego: {
+      badge: "PASAR NEGOSIASI (NG)",
+      resTag: "NG • KESEPAKATAN",
+      desc: "<strong>Pasar Negosiasi (NG):</strong> Transaksi tawar-menawar langsung antar pihak (crossing / block sale / odd-lot). Volume dihitung dalam satuan <strong>Lembar</strong>, kliring KPEI 0,009% (SKB BEI-KPEI-KSEI), tanpa batas ARA/ARB.",
+      unitMode: "shares",
+      volLabel: "Jumlah Lembar Saham (Satuan Lembar)",
+      kpeiRate: REG_RATES.kpeiNego,
+      freeBuy: false
+    },
+    tunai: {
+      badge: "PASAR TUNAI (TN)",
+      resTag: "TN • T+0 (HARI SAMA)",
+      desc: "<strong>Pasar Tunai (TN):</strong> Penyelesaian transaksi dilakukan pada hari yang sama (T+0) pada sesi I. Satuan perdagangan Lot (100 lembar) dengan struktur pungutan bursa & pajak sama seperti Reguler.",
+      unitMode: "lot",
+      volLabel: "Jumlah Lot (1 Lot = 100 lbr)",
+      kpeiRate: REG_RATES.kpeiRegular,
+      freeBuy: false
+    },
+    daytrade: {
+      badge: "DAY TRADE / INTRADAY",
+      resTag: "DAY TRADE • INTRADAY",
+      desc: "<strong>Day Trade (Beli & Jual di Hari Sama):</strong> Otomatis memakai tarif khusus Day Trade jika broker mendukung (misal Mirae/MOST/BIONS). e-Meterai dihitung dari akumulasi transaksi harian (> Rp 10 Juta = 1x Materai).",
+      unitMode: "lot",
+      volLabel: "Jumlah Lot (1 Lot = 100 lbr)",
+      kpeiRate: REG_RATES.kpeiRegular,
+      freeBuy: false
+    },
+    ipo: {
+      badge: "TRANSAKSI e-IPO",
+      resTag: "IPO → PASAR SEKUNDER",
+      desc: "<strong>Pasar Perdana (e-IPO):</strong> Saat penjatahan beli IPO dikenakan <strong>0% Komisi Broker, 0% Levy, & 0% PPN</strong>. Biaya broker, levy, PPN, dan PPh Final 0,1% hanya dikenakan saat saham dijual di pasar sekunder.",
+      unitMode: "lot",
+      volLabel: "Jumlah Lot Penjatahan IPO",
+      kpeiRate: REG_RATES.kpeiRegular,
+      freeBuy: true
+    }
+  };
+
+  let hasCalculatedOnce = false;
+
+  // DOM Elements
+  const txTypeSelect = document.getElementById("txType");
+  const brokerSelect = document.getElementById("brokerSelect");
+  const buyFeeInput = document.getElementById("buyFeePct");
+  const sellFeeInput = document.getElementById("sellFeePct");
+  const volumeInput = document.getElementById("volumeInput");
+  const totalSharesPreview = document.getElementById("totalSharesPreview");
+  const resultSection = document.getElementById("resultSection");
+  const staleBanner = document.getElementById("staleBanner");
+  const brokerNoteBox = document.getElementById("brokerNoteBox");
+
+  function initBrokers() {
+    BROKERS.forEach(b => {
+      const opt = document.createElement("option");
+      opt.value = b.id;
+      opt.textContent = b.name;
+      brokerSelect.appendChild(opt);
+    });
+  }
+
+  function updateSharesPreview() {
+    const rule = MARKET_RULES[txTypeSelect.value];
+    const vol = parseFloat(volumeInput.value) || 0;
+    const totalShares = rule.unitMode === "lot" ? vol * 100 : vol;
+    totalSharesPreview.value = totalShares;
+  }
+
+  function syncFeeRates() {
+    const rule = MARKET_RULES[txTypeSelect.value];
+    const selectedBroker = BROKERS.find(b => b.id === brokerSelect.value) || BROKERS[0];
+
+    document.getElementById("marketBadge").textContent = rule.badge;
+    document.getElementById("marketDescBox").innerHTML = rule.desc;
+    document.getElementById("lblVolume").textContent = rule.volLabel;
+    brokerNoteBox.textContent = selectedBroker.notes || "Tarif standar sekuritas anggota bursa";
+
+    const isBaseMode = selectedBroker.feeMode === "base_fee";
+    document.getElementById("lblBuyFee").textContent = isBaseMode ? "Base Fee Beli (%)" : "Total Fee Beli (%)";
+    document.getElementById("lblSellFee").textContent = isBaseMode ? "Base Fee Jual (%)" : "Total Fee Jual (%)";
+
+    if (rule.freeBuy) {
+      buyFeeInput.value = 0;
+      buyFeeInput.disabled = true;
+      buyFeeInput.style.background = "#E2E8F0";
+    } else {
+      buyFeeInput.disabled = false;
+      buyFeeInput.style.background = "#FFFFFF";
+      if (!selectedBroker.id.startsWith("custom")) {
+        const useDt = txTypeSelect.value === "daytrade" && selectedBroker.dayTrade && selectedBroker.dayTrade.available && selectedBroker.dayTrade.buy !== undefined;
+        buyFeeInput.value = useDt ? selectedBroker.dayTrade.buy : selectedBroker.buy;
+      }
+    }
+
+    if (!selectedBroker.id.startsWith("custom")) {
+      const useDt = txTypeSelect.value === "daytrade" && selectedBroker.dayTrade && selectedBroker.dayTrade.available && selectedBroker.dayTrade.sell !== undefined;
+      sellFeeInput.value = useDt ? selectedBroker.dayTrade.sell : selectedBroker.sell;
+    }
+
+    updateSharesPreview();
+    markAsStale();
+  }
+
+  function markAsStale() {
+    if (hasCalculatedOnce) {
+      staleBanner.style.display = "block";
+    }
+  }
+
+  function formatIDR(num) {
+    const isNegative = num < 0;
+    const absVal = Math.round(Math.abs(num));
+    const formatted = absVal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return (isNegative ? "-Rp " : "Rp ") + formatted;
+  }
+
+  function calculate() {
+    const txType = txTypeSelect.value;
+    const rule = MARKET_RULES[txType];
+    const selectedBroker = BROKERS.find(b => b.id === brokerSelect.value) || BROKERS[0];
+
+    const buyPrice = parseFloat(document.getElementById("buyPrice").value) || 0;
+    const sellPrice = parseFloat(document.getElementById("sellPrice").value) || 0;
+    const vol = parseFloat(volumeInput.value) || 0;
+    const inputBuyRate = rule.freeBuy ? 0 : ((parseFloat(buyFeeInput.value) || 0) / 100);
+    const inputSellRate = (parseFloat(sellFeeInput.value) || 0) / 100;
+    const includeStamp = document.getElementById("includeStamp").checked;
+
+    const shares = rule.unitMode === "lot" ? vol * 100 : vol;
+    const buyValue = buyPrice * shares;
+    const sellValue = sellPrice * shares;
+
+    // Tarif Regulator Baku (SRO)
+    const levyBeiRate = REG_RATES.levyBeiKsei; // 0.03%
+    const kpeiRate = rule.kpeiRate;           // 0.01% (atau 0.009% di NG)
+    const levyVatRate = levyBeiRate * REG_RATES.vatEffective; // 0.0033%
+    const totalRegBuyRate = rule.freeBuy ? 0 : (levyBeiRate + kpeiRate + levyVatRate);
+    const totalRegSellRate = levyBeiRate + kpeiRate + levyVatRate + REG_RATES.pphFinal;
+
+    let brokerPureBuyFee = 0;
+    let brokerPureSellFee = 0;
+    let brokerVatTotal = 0;
+
+    if (selectedBroker.feeMode === "base_fee") {
+      // Mode Base Fee: input adalah komisi murni broker
+      brokerPureBuyFee = buyValue * inputBuyRate;
+      brokerPureSellFee = sellValue * inputSellRate;
+      brokerVatTotal = (brokerPureBuyFee + brokerPureSellFee) * REG_RATES.vatEffective;
+    } else {
+      // Mode All-In: pecah komisi murni broker dari total tarif All-In agar tidak double counting
+      const netBrokerBuyWithVatRate = rule.freeBuy ? 0 : Math.max(0, inputBuyRate - totalRegBuyRate);
+      const netBrokerSellWithVatRate = Math.max(0, inputSellRate - totalRegSellRate);
+
+      const buyBrokerGross = buyValue * netBrokerBuyWithVatRate;
+      const sellBrokerGross = sellValue * netBrokerSellWithVatRate;
+
+      brokerPureBuyFee = buyBrokerGross / (1 + REG_RATES.vatEffective);
+      brokerPureSellFee = sellBrokerGross / (1 + REG_RATES.vatEffective);
+      brokerVatTotal = (buyBrokerGross - brokerPureBuyFee) + (sellBrokerGross - brokerPureSellFee);
+    }
+
+    // Cek Minimum Fee Harian (contoh: Mandiri Sekuritas Rp 5.000/hari)
+    let minFeeNote = "";
+    if (selectedBroker.minimumFee && (brokerPureBuyFee + brokerPureSellFee) > 0 && (brokerPureBuyFee + brokerPureSellFee) < selectedBroker.minimumFee) {
+      const diff = selectedBroker.minimumFee - (brokerPureBuyFee + brokerPureSellFee);
+      brokerPureBuyFee += diff;
+      brokerVatTotal = (brokerPureBuyFee + brokerPureSellFee) * REG_RATES.vatEffective;
+      minFeeNote = ` [Min Fee ${formatIDR(selectedBroker.minimumFee)}]`;
+    }
+
+    // Pungutan Regulator & Pajak
+    const levyBeiTotal = (rule.freeBuy ? 0 : buyValue * levyBeiRate) + (sellValue * levyBeiRate);
+    const kpeiTotal = (rule.freeBuy ? 0 : buyValue * kpeiRate) + (sellValue * kpeiRate);
+    const levyVatTotal = (rule.freeBuy ? 0 : buyValue * levyVatRate) + (sellValue * levyVatRate);
+    const pphFinal = sellValue * REG_RATES.pphFinal;
+
+    // e-Meterai (PMK 134/2021)
+    let stampCost = 0;
+    let stampLabel = "e-Meterai (PMK 134/2021)";
+    if (includeStamp) {
+      if (txType === "daytrade") {
+        if ((buyValue + sellValue) > 10000000) {
+          stampCost = REG_RATES.stampDuty;
+          stampLabel = "e-Meterai (Akumulasi Harian > 10 Jt)";
+        }
+      } else {
+        if (!rule.freeBuy && buyValue > 10000000) stampCost += REG_RATES.stampDuty;
+        if (sellValue > 10000000) stampCost += REG_RATES.stampDuty;
+      }
+    }
+
+    // Total Biaya & Profit
+    const totalCost = brokerPureBuyFee + brokerPureSellFee + brokerVatTotal + levyBeiTotal + kpeiTotal + levyVatTotal + pphFinal + stampCost;
+    const grossProfit = sellValue - buyValue;
+    const netProfit = grossProfit - totalCost;
+
+    const totalBuyCost = rule.freeBuy ? 0 : (brokerPureBuyFee + (brokerPureBuyFee * REG_RATES.vatEffective) + (buyValue * totalRegBuyRate));
+    const totalModalBeli = buyValue + totalBuyCost;
+    const netPct = totalModalBeli > 0 ? (netProfit / totalModalBeli) * 100 : 0;
+
+    // Harga Breakeven (BEP) per lembar
+    const effectiveSellDeductionRate = selectedBroker.feeMode === "base_fee"
+      ? (inputSellRate * (1 + REG_RATES.vatEffective)) + totalRegSellRate
+      : inputSellRate;
+    const bepPrice = shares > 0 ? Math.ceil(totalModalBeli / (shares * (1 - effectiveSellDeductionRate))) : 0;
+
+    // Render ke UI
+    document.getElementById("resMarketTag").textContent = `${selectedBroker.code} • ${rule.resTag}`;
+
+    const highlightBox = document.getElementById("profitHighlightBox");
+    const netProfitEl = document.getElementById("resNetProfit");
+    const netPctEl = document.getElementById("resNetPct");
+
+    netProfitEl.textContent = formatIDR(netProfit);
+    netPctEl.textContent = (netPct >= 0 ? "+" : "") + netPct.toFixed(2) + "%";
+
+    if (netProfit < 0) {
+      highlightBox.classList.add("loss-box");
+    } else {
+      highlightBox.classList.remove("loss-box");
+    }
+
+    document.getElementById("resGrossProfit").textContent = formatIDR(grossProfit);
+    document.getElementById("resTotalCost").textContent = formatIDR(totalCost);
+
+    // Rincian Trade Confirmation
+    document.getElementById("detBuyVal").textContent = formatIDR(buyValue);
+    document.getElementById("detSellVal").textContent = formatIDR(sellValue);
+    document.getElementById("lblDetBuyFee").textContent = (rule.freeBuy ? "Komisi Broker Beli (e-IPO 0%)" : "Komisi Murni Broker (Beli)") + minFeeNote;
+    document.getElementById("detBuyFee").textContent = formatIDR(brokerPureBuyFee);
+    document.getElementById("detSellFee").textContent = formatIDR(brokerPureSellFee);
+    document.getElementById("detBrokerVat").textContent = formatIDR(brokerVatTotal);
+    document.getElementById("detLevyBei").textContent = formatIDR(levyBeiTotal);
+    document.getElementById("lblDetKpei").textContent = `Biaya Kliring KPEI (${(kpeiRate * 100).toFixed(3)}%)`;
+    document.getElementById("detKpei").textContent = formatIDR(kpeiTotal);
+    document.getElementById("detLevyVat").textContent = formatIDR(levyVatTotal);
+    document.getElementById("detPph").textContent = formatIDR(pphFinal);
+    document.getElementById("lblDetStamp").textContent = stampLabel;
+    document.getElementById("detStamp").textContent = formatIDR(stampCost);
+    document.getElementById("detBep").textContent = formatIDR(bepPrice);
+    document.getElementById("detTotalFee").textContent = formatIDR(totalCost);
+
+    hasCalculatedOnce = true;
+    staleBanner.style.display = "none";
+    resultSection.classList.add("visible");
+    resultSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // Event Listeners
+  txTypeSelect.addEventListener("change", () => {
+    if (txTypeSelect.value === "nego" && parseFloat(volumeInput.value) <= 50) {
+      volumeInput.value = 150;
+    } else if (txTypeSelect.value !== "nego" && parseFloat(volumeInput.value) >= 100) {
+      volumeInput.value = 10;
+    }
+    syncFeeRates();
+  });
+
+  brokerSelect.addEventListener("change", syncFeeRates);
+
+  [buyFeeInput, sellFeeInput].forEach(el => {
+    el.addEventListener("input", () => {
+      if (!brokerSelect.value.startsWith("custom")) {
+        brokerSelect.value = "custom_all_in";
+        brokerNoteBox.textContent = BROKERS.find(b => b.id === "custom_all_in").notes;
+      }
+      markAsStale();
+    });
+  });
+
+  volumeInput.addEventListener("input", () => {
+    updateSharesPreview();
+    markAsStale();
+  });
+
+  ["buyPrice", "sellPrice", "includeStamp"].forEach(id => {
+    document.getElementById(id).addEventListener("input", markAsStale);
+  });
+
+  document.getElementById("btnCalculate").addEventListener("click", calculate);
+
+  document.getElementById("btnExample").addEventListener("click", () => {
+    txTypeSelect.value = "regular";
+    document.getElementById("buyPrice").value = 9500;
+    document.getElementById("sellPrice").value = 9800;
+    volumeInput.value = 10;
+    brokerSelect.value = "stockbit";
+    syncFeeRates();
+    calculate();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", () => {
+    txTypeSelect.value = "regular";
+    document.getElementById("buyPrice").value = 1000;
+    document.getElementById("sellPrice").value = 1100;
+    volumeInput.value = 10;
+    brokerSelect.value = "stockbit";
+    syncFeeRates();
+    hasCalculatedOnce = false;
+    staleBanner.style.display = "none";
+    resultSection.classList.remove("visible");
+  });
+
+  initBrokers();
+  syncFeeRates();
+</script>
+
+</body>
+</html>

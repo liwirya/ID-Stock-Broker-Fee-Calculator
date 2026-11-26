@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Hard offset Neo-Brutalist shadow block -->
+    <path
+        android:fillColor="#FF111111"
+        android:pathData="M31,31h52v52h-52z" />
+    <!-- White card base with thick ink border -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M25,25h52v52h-52z"
+        android:strokeWidth="4"
+        android:strokeColor="#FF111111" />
+    <!-- Green profit header bar inside icon -->
+    <path
+        android:fillColor="#FF4ADE80"
+        android:pathData="M27,27h48v16h-48z" />
+    <path
+        android:fillColor="#FF111111"
+        android:pathData="M25,41h52v4h-52z" />
+    <!-- Bold rising stock chart bars + upward trend inside lower section -->
+    <path
+        android:fillColor="#FF111111"
+        android:pathData="M33,60h8v11h-8zM47,53h8v18h-8zM61,47h8v24h-8z" />
+    <!-- Bold percentage / calculator accent dots in green bar -->
+    <path
+        android:fillColor="#FF111111"
+        android:pathData="M33,32h14v5h-14zM60,32h9v5h-9z" />
+</vector>

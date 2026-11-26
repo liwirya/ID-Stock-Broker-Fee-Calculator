@@ -1,0 +1,6 @@
+{
+  "name": "Fee Saham BEI",
+  "description": "Kalkulator Fee Saham BEI terverifikasi OJK, KPEI & KSEI dengan gaya Neo-Brutalist, pencarian 30+ broker, penyimpanan broker default, dan fitur bagikan Trade Confirmation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
