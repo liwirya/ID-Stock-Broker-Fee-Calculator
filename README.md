@@ -94,39 +94,6 @@ Misalkan Anda membeli saham **BBCA** dengan rincian berikut:
 | **Hasil Jual Bersih** | `Rp 9.675.750` | Nilai jual kotor - biaya jual |
 | **Net Profit / Loss** | **`+Rp 161.500`** | **ROI bersih: `+1.70%`** |
 
-### 3. Contoh Logika Formula Dasar (JavaScript)
-```javascript
-function calculateStockTrade({ buyPrice, sellPrice, lots, buyFeeRate, sellFeeRate }) {
-  const shares = lots * 100;
-  const grossBuy = buyPrice * shares;
-  const buyFee = grossBuy * (buyFeeRate / 100);
-  const totalBuy = grossBuy + buyFee;
-
-  const grossSell = sellPrice * shares;
-  const sellFee = grossSell * (sellFeeRate / 100);
-  const netSell = grossSell - sellFee;
-
-  const netPnL = netSell - totalBuy;
-  const roiPercentage = (netPnL / totalBuy) * 100;
-
-  return { totalBuy, netSell, netPnL, roiPercentage };
-}
-```
-
----
-
-## Kontribusi
-
-Kontribusi sangat terbuka untuk membuat kalkulator ini semakin akurat dan bermanfaat bagi investor ritel Indonesia! Jika Anda ingin berkontribusi:
-
-1. **Fork** repositori ini.
-2. Buat *branch* fitur baru (`git checkout -b fitur/nama-fitur-baru`).
-3. Lakukan perubahan dan *commit* (`git commit -m "Menambahkan fitur perhitungan fraksi harga"`).
-4. *Push* ke *branch* tersebut (`git push origin fitur/nama-fitur-baru`).
-5. Buat **Pull Request** dan jelaskan detail perubahan Anda.
-
-Anda juga dapat membuka **Issue** apabila menemukan *bug* perhitungan atau ingin mengusulkan tarif sekuritas terbaru.
-
 ---
 
 ## Lisensi
