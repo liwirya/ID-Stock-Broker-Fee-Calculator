@@ -66,6 +66,18 @@ object BrokerCatalog {
             dayTrade = DayTradeConfig(available = false),
             notes = "Tarif All-In terintegrasi Anggota Bursa berizin OJK"
         ),
+        Broker(
+            id = "pluangmaju",
+            code = "RO",
+            name = "Pluang Maju Sekuritas",
+            displayLabel = "Pluang Maju Sekuritas (RO) — 0.30% / 0.30%",
+            buy = 0.30,
+            sell = 0.30,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.RETAIL_DIGITAL,
+            dayTrade = DayTradeConfig(available = false),
+            notes = "Tarif All-In Pluang Maju Sekuritas (RO)"
+        ),
 
         // === BUMN / BANK-BACKED SEKURITAS ===
         Broker(
@@ -133,6 +145,32 @@ object BrokerCatalog {
 
         // === SEKURITAS SWASTA & ASING POPULER ===
         Broker(
+            id = "pancaglobal",
+            code = "PG",
+            name = "Panca Global Sekuritas / Hei5",
+            displayLabel = "Panca Global Sekuritas / Hei5 (PG) — 0.10% / 0.20%",
+            buy = 0.10,
+            sell = 0.20,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            promotional = true,
+            dayTrade = DayTradeConfig(available = false),
+            notes = "Tarif All-In Aplikasi Hei5"
+        ),
+        Broker(
+            id = "paramitra",
+            code = "PS",
+            name = "Paramitra Alfa Sekuritas",
+            displayLabel = "Paramitra Alfa Sekuritas (PS) — 0.10% / 0.20%",
+            buy = 0.10,
+            sell = 0.20,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            promotional = true,
+            dayTrade = DayTradeConfig(available = false),
+            notes = "Tarif All-In Paramitra Alfa Sekuritas"
+        ),
+        Broker(
             id = "kisi",
             code = "BQ",
             name = "Korea Investment & Sekuritas / KISI",
@@ -146,16 +184,39 @@ object BrokerCatalog {
             notes = "Aplikasi KOINS / iKISI"
         ),
         Broker(
+            id = "phintraco",
+            code = "AT",
+            name = "Phintraco Sekuritas / Profits",
+            displayLabel = "Phintraco Sekuritas / Profits (AT) — 0.15% / 0.18%",
+            buy = 0.15,
+            sell = 0.18,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            dayTrade = DayTradeConfig(available = false),
+            notes = "Tarif All-In Profits Anywhere"
+        ),
+        Broker(
             id = "sinarmas",
             code = "DH",
             name = "Sinarmas Sekuritas / SimInvest",
-            displayLabel = "Sinarmas Sekuritas / SimInvest (DH) — 0.14% / 0.24%",
-            buy = 0.14,
-            sell = 0.24,
+            displayLabel = "Sinarmas Sekuritas / SimInvest (DH) — 0.15% / 0.25%",
+            buy = 0.15,
+            sell = 0.25,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
             dayTrade = DayTradeConfig(available = true, buy = 0.125, sell = 0.225),
             notes = "Aplikasi SimInvest"
+        ),
+        Broker(
+            id = "lotus",
+            code = "YJ",
+            name = "Lotus Andalan Sekuritas",
+            displayLabel = "Lotus Andalan Sekuritas (YJ) — 0.15% / 0.25%",
+            buy = 0.15,
+            sell = 0.25,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In LOTS Online Trading"
         ),
         Broker(
             id = "kbvalbury",
@@ -167,61 +228,6 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
             notes = "Tarif All-In Online Trading"
-        ),
-        Broker(
-            id = "cgs",
-            code = "YU",
-            name = "CGS International Sekuritas",
-            displayLabel = "CGS International Sekuritas (YU) — 0.18% / 0.28%",
-            buy = 0.18,
-            sell = 0.28,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In CGS iTrade"
-        ),
-        Broker(
-            id = "trimegah",
-            code = "LG",
-            name = "Trimegah Sekuritas Indonesia",
-            displayLabel = "Trimegah Sekuritas Indonesia (LG) — 0.18% / 0.28%",
-            buy = 0.18,
-            sell = 0.28,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Online Trading"
-        ),
-        Broker(
-            id = "panin",
-            code = "GR",
-            name = "Panin Sekuritas / POST",
-            displayLabel = "Panin Sekuritas / POST (GR) — 0.18% / 0.28%",
-            buy = 0.18,
-            sell = 0.28,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In POST Online"
-        ),
-        Broker(
-            id = "phillip",
-            code = "KK",
-            name = "Phillip Sekuritas / POEMS",
-            displayLabel = "Phillip Sekuritas / POEMS (KK) — 0.18% / 0.28%",
-            buy = 0.18,
-            sell = 0.28,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In POEMS ID"
-        ),
-        Broker(
-            id = "henan",
-            code = "HP",
-            name = "Henan Putihrai Sekuritas / HPX",
-            displayLabel = "Henan Putihrai Sekuritas / HPX (HP) — 0.18% / 0.28%",
-            buy = 0.18,
-            sell = 0.28,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In HPX Online"
         ),
         Broker(
             id = "sucor",
@@ -257,62 +263,6 @@ object BrokerCatalog {
             notes = "Tarif All-In STAR Online"
         ),
         Broker(
-            id = "mnc",
-            code = "EP",
-            name = "MNC Sekuritas / MotionTrade",
-            displayLabel = "MNC Sekuritas / MotionTrade (EP) — 0.18% / 0.28%",
-            buy = 0.18,
-            sell = 0.28,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In MotionTrade"
-        ),
-        Broker(
-            id = "phintraco",
-            code = "AT",
-            name = "Phintraco Sekuritas / Profits",
-            displayLabel = "Phintraco Sekuritas / Profits (AT) — 0.15% / 0.25%",
-            buy = 0.15,
-            sell = 0.25,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Profits Anywhere"
-        ),
-        Broker(
-            id = "pancaglobal",
-            code = "PG",
-            name = "Panca Global Sekuritas / Hei5",
-            displayLabel = "Panca Global Sekuritas / Hei5 (PG) — 0.10% / 0.20%",
-            buy = 0.10,
-            sell = 0.20,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            promotional = true,
-            notes = "Tarif All-In Aplikasi Hei5"
-        ),
-        Broker(
-            id = "nhkorindo",
-            code = "XA",
-            name = "NH Korindo Sekuritas",
-            displayLabel = "NH Korindo Sekuritas (XA) — 0.15% / 0.25%",
-            buy = 0.15,
-            sell = 0.25,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Online Trading"
-        ),
-        Broker(
-            id = "kiwoom",
-            code = "AG",
-            name = "Kiwoom Sekuritas / HERO",
-            displayLabel = "Kiwoom Sekuritas / HERO (AG) — 0.18% / 0.28%",
-            buy = 0.18,
-            sell = 0.28,
-            feeMode = FeeMode.ALL_IN,
-            category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In HERO"
-        ),
-        Broker(
             id = "yuanta",
             code = "FS",
             name = "Yuanta Sekuritas / YSinvest",
@@ -324,15 +274,114 @@ object BrokerCatalog {
             notes = "Tarif All-In YSinvest"
         ),
         Broker(
-            id = "uob",
-            code = "AI",
-            name = "UOB Kay Hian Sekuritas",
-            displayLabel = "UOB Kay Hian Sekuritas (AI) — 0.25% / 0.35%",
-            buy = 0.25,
-            sell = 0.35,
+            id = "megacapital",
+            code = "CD",
+            name = "Mega Capital Sekuritas",
+            displayLabel = "Mega Capital Sekuritas (CD) — 0.17% / 0.28%",
+            buy = 0.17,
+            sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In UTRADE"
+            notes = "Tarif All-In InvestasiKu / M-Trade"
+        ),
+        Broker(
+            id = "nhkorindo",
+            code = "XA",
+            name = "NH Korindo Sekuritas Indonesia",
+            displayLabel = "NH Korindo Sekuritas Indonesia (XA) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In NAIK / Online Trading"
+        ),
+        Broker(
+            id = "phillip",
+            code = "KK",
+            name = "Phillip Sekuritas Indonesia / POEMS",
+            displayLabel = "Phillip Sekuritas Indonesia / POEMS (KK) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In POEMS ID"
+        ),
+        Broker(
+            id = "pilarmas",
+            code = "PO",
+            name = "Pilarmas Investindo Sekuritas",
+            displayLabel = "Pilarmas Investindo Sekuritas (PO) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In Pilarmas Online Trading"
+        ),
+        Broker(
+            id = "profindo",
+            code = "RG",
+            name = "Profindo Sekuritas Indonesia",
+            displayLabel = "Profindo Sekuritas Indonesia (RG) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In ProClick Online Trading"
+        ),
+        Broker(
+            id = "cgs",
+            code = "YU",
+            name = "CGS International Sekuritas",
+            displayLabel = "CGS International Sekuritas (YU) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In CGS iTrade"
+        ),
+        Broker(
+            id = "trimegah",
+            code = "LG",
+            name = "Trimegah Sekuritas Indonesia",
+            displayLabel = "Trimegah Sekuritas Indonesia (LG) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In Online Trading"
+        ),
+        Broker(
+            id = "henan",
+            code = "HP",
+            name = "Henan Putihrai Sekuritas / HPX",
+            displayLabel = "Henan Putihrai Sekuritas / HPX (HP) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In HPX Online"
+        ),
+        Broker(
+            id = "mnc",
+            code = "EP",
+            name = "MNC Sekuritas / MotionTrade",
+            displayLabel = "MNC Sekuritas / MotionTrade (EP) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In MotionTrade"
+        ),
+        Broker(
+            id = "kiwoom",
+            code = "AG",
+            name = "Kiwoom Sekuritas / HERO",
+            displayLabel = "Kiwoom Sekuritas / HERO (AG) — 0.18% / 0.28%",
+            buy = 0.18,
+            sell = 0.28,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In HERO"
         ),
         Broker(
             id = "ciptadana",
@@ -355,6 +404,50 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
             notes = "Tarif All-In Maybank Trade ID"
+        ),
+        Broker(
+            id = "panin",
+            code = "GR",
+            name = "Panin Sekuritas Tbk / POST",
+            displayLabel = "Panin Sekuritas Tbk / POST (GR) — 0.20% / 0.30%",
+            buy = 0.20,
+            sell = 0.30,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In POST Online"
+        ),
+        Broker(
+            id = "pacific",
+            code = "AP",
+            name = "Pacific Sekuritas Indonesia",
+            displayLabel = "Pacific Sekuritas Indonesia (AP) — 0.20% / 0.30%",
+            buy = 0.20,
+            sell = 0.30,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In Pacific Sekuritas Indonesia"
+        ),
+        Broker(
+            id = "minnapadi",
+            code = "MU",
+            name = "Minna Padi Investama Sekuritas Tbk",
+            displayLabel = "Minna Padi Investama Sekuritas Tbk (MU) — 0.25% / 0.35%",
+            buy = 0.25,
+            sell = 0.35,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In Minna Padi Investama Sekuritas"
+        ),
+        Broker(
+            id = "uob",
+            code = "AI",
+            name = "UOB Kay Hian Sekuritas",
+            displayLabel = "UOB Kay Hian Sekuritas (AI) — 0.25% / 0.35%",
+            buy = 0.25,
+            sell = 0.35,
+            feeMode = FeeMode.ALL_IN,
+            category = BrokerCategory.SWASTA_ASING,
+            notes = "Tarif All-In UTRADE"
         ),
 
         // === MODE CUSTOM ===

@@ -88,6 +88,7 @@ import com.example.domain.CalculationResult
 import com.example.domain.FeeMode
 import com.example.domain.MarketType
 import com.example.presentation.CalculatorUiState
+import com.example.ui.components.BrokerLogoEmblem
 import com.example.ui.components.BrokerPickerSheet
 import com.example.ui.components.NeoButton
 import com.example.ui.components.NeoCard
@@ -929,20 +930,10 @@ private fun BrokerSelectorTrigger(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .background(neo.yellow)
-                    .border(BorderStroke(2.dp, neo.ink))
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = broker.code,
-                    fontFamily = SpaceMonoFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = neo.ink
-                )
-            }
+            BrokerLogoEmblem(
+                broker = broker,
+                size = 46.dp
+            )
             Text(
                 text = broker.displayLabel,
                 fontFamily = SpaceGroteskFontFamily,

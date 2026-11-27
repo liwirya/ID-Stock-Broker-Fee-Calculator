@@ -156,6 +156,8 @@ jobs:
       - name: Prepare APK release asset
         id: prepare_asset
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           SOURCE_APK="app/build/outputs/apk/debug/app-debug.apk"
@@ -165,13 +167,22 @@ jobs:
             exit 1
           fi
 
-          REPO_NAME_RAW="${GITHUB_REPOSITORY##*/}"
-          REPO_NAME_SAFE="$(printf '%s' "$REPO_NAME_RAW" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/-+/-/g; s/^[-._]+//; s/[-._]+$//')"
-          if [ -z "$REPO_NAME_SAFE" ]; then
-            REPO_NAME_SAFE="android-app"
+          APP_VERSION="$(sed -nE 's/^[[:space:]]*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' app/build.gradle.kts | head -n 1)"
+          if [ -z "$APP_VERSION" ]; then
+            APP_VERSION="1.0.1"
           fi
 
-          RELEASE_ASSET_NAME="${REPO_NAME_SAFE}-debug-build-${GITHUB_RUN_NUMBER}.apk"
+          APP_SLUG="kalkulator-fee-saham-bei"
+          BASE_TAG="${APP_SLUG}-v${APP_VERSION}"
+          RELEASE_TAG="${BASE_TAG}"
+          RELEASE_TITLE="Kalkulator Fee Saham BEI (V${APP_VERSION})"
+
+          if command -v gh >/dev/null 2>&1 && gh release view "$BASE_TAG" >/dev/null 2>&1; then
+            RELEASE_TAG="${BASE_TAG}-r${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+            RELEASE_TITLE="Kalkulator Fee Saham BEI (V${APP_VERSION} - Build #${GITHUB_RUN_NUMBER})"
+          fi
+
+          RELEASE_ASSET_NAME="${APP_SLUG}-v${APP_VERSION}.apk"
           TEMP_RELEASE_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/apk-release-asset.XXXXXX")"
           RELEASE_ASSET_PATH="${TEMP_RELEASE_DIR}/${RELEASE_ASSET_NAME}"
 
@@ -182,17 +193,15 @@ jobs:
             exit 1
           fi
 
-          RELEASE_TAG="debug-apk-build-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
-          RELEASE_TITLE="Debug APK Build #${GITHUB_RUN_NUMBER}"
-
           {
+            echo "app_version=${APP_VERSION}"
             echo "asset_path=${RELEASE_ASSET_PATH}"
             echo "asset_name=${RELEASE_ASSET_NAME}"
             echo "release_tag=${RELEASE_TAG}"
             echo "release_title=${RELEASE_TITLE}"
           } >> "$GITHUB_OUTPUT"
 
-          echo "Prepared APK release asset: ${RELEASE_ASSET_NAME}"
+          echo "Prepared APK release asset: ${RELEASE_ASSET_NAME} (tag: ${RELEASE_TAG}, title: ${RELEASE_TITLE})"
 
       - name: Publish APK to GitHub Releases
         id: publish_release
@@ -200,6 +209,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          APP_VERSION: ${{ steps.prepare_asset.outputs.app_version }}
           ASSET_PATH: ${{ steps.prepare_asset.outputs.asset_path }}
           ASSET_NAME: ${{ steps.prepare_asset.outputs.asset_name }}
           RELEASE_TAG: ${{ steps.prepare_asset.outputs.release_tag }}
@@ -217,25 +227,39 @@ jobs:
             exit 1
           fi
 
-          RELEASE_NOTES="$(cat <<EOF
-          This is an automatically generated debug APK built by GitHub Actions.
+          CHANGELOG_SECTION=""
+          if [ -f "CHANGELOG.md" ]; then
+            CHANGELOG_SECTION="$(awk -v ver="## [V${APP_VERSION}]" '
+              $0 == ver { found=1; next }
+              found && /^## \[/ { exit }
+              found { print }
+            ' CHANGELOG.md)"
+          fi
 
-          - **Workflow Run Number:** ${GITHUB_RUN_NUMBER}
-          - **Workflow Run Attempt:** ${GITHUB_RUN_ATTEMPT}
-          - **Source Commit SHA:** ${GITHUB_SHA}
-          - **APK Filename:** \`${ASSET_NAME}\`
+          if [ -z "$(printf '%s' "$CHANGELOG_SECTION" | tr -d '[:space:]')" ]; then
+            CHANGELOG_SECTION="Pembaruan dan perbaikan untuk Kalkulator Fee Saham BEI (V${APP_VERSION})."
+          fi
 
-          ### Important Notices
-          - This APK is intended for testing purposes only.
-          - This APK is **not** a Google Play Store production release.
-          - This APK is signed only with a temporary debug keystore generated during the GitHub Actions run.
-          EOF
-          )"
+          NOTES_FILE="${RUNNER_TEMP:-/tmp}/release-notes-${GITHUB_RUN_NUMBER}.md"
+          {
+            echo "## Kalkulator Fee Saham BEI (V${APP_VERSION})"
+            echo ""
+            printf '%s\n' "$CHANGELOG_SECTION"
+            echo ""
+            echo "---"
+            echo "### Informasi Build"
+            echo "- **Versi Aplikasi:** V${APP_VERSION}"
+            echo "- **Workflow Run Number:** #${GITHUB_RUN_NUMBER} (Attempt ${GITHUB_RUN_ATTEMPT})"
+            echo "- **Commit SHA:** \`${GITHUB_SHA}\`"
+            echo "- **File APK:** \`${ASSET_NAME}\`"
+            echo ""
+            echo "> **Catatan:** Ini adalah debug APK yang dibangun otomatis oleh GitHub Actions dengan debug keystore sementara untuk keperluan pengujian (bukan rilis produksi Play Store)."
+          } > "$NOTES_FILE"
 
           gh release create "$RELEASE_TAG" "$ASSET_PATH" \
             --target "$GITHUB_SHA" \
             --title "$RELEASE_TITLE" \
-            --notes "$RELEASE_NOTES" \
+            --notes-file "$NOTES_FILE" \
             --latest
 
       - name: Report APK download result

@@ -7,7 +7,7 @@
     <string name="header_title_highlight">FEE SAHAM</string>
     <string name="header_subtitle">Perhitungan presisi Trade Confirmation bursa: memecah otomatis komisi broker, Levy BEI/KSEI, kliring KPEI, PPN, PPh Final 0.1%, &amp; e-Meterai.</string>
 
-    <string name="badge_brokers_val">30+ AB</string>
+    <string name="badge_brokers_val">38 AB</string>
     <string name="badge_brokers_lbl">Broker Aktif OJK</string>
     <string name="badge_levy_val">0.0433%</string>
     <string name="badge_levy_lbl">Levy BEI+KPEI+KSEI</string>
@@ -35,7 +35,7 @@
     <string name="btn_reset_form">Reset Form</string>
 
     <!-- Broker Picker Sheet -->
-    <string name="broker_sheet_title">Pilih Sekuritas (30+ AB OJK)</string>
+    <string name="broker_sheet_title">Pilih Sekuritas (38 AB OJK)</string>
     <string name="broker_search_placeholder">Cari nama broker, kode AB (XL, YP), atau aplikasi…</string>
     <string name="broker_default_badge">DEFAULT</string>
     <string name="broker_promo_badge">PROMO</string>

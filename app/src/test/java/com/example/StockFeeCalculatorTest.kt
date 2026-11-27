@@ -122,11 +122,56 @@ class StockFeeCalculatorTest {
     }
 
     @Test
-    fun `broker catalog contains 30 plus OJK brokers and supports search by code and app name`() {
-        assertTrue(BrokerCatalog.allBrokers.size >= 32)
+    fun `broker catalog contains 38 OJK brokers with V1_0_1 revisions and new additions`() {
+        assertEquals(40, BrokerCatalog.allBrokers.size) // 38 OJK AB + 2 custom modes
+
+        // Revised brokers
+        val pg = BrokerCatalog.findById("pancaglobal")
+        assertEquals(0.10, pg.buy, 0.0001)
+        assertEquals(0.20, pg.sell, 0.0001)
+
+        val xa = BrokerCatalog.findById("nhkorindo")
+        assertEquals(0.18, xa.buy, 0.0001)
+        assertEquals(0.28, xa.sell, 0.0001)
+
+        val dh = BrokerCatalog.findById("sinarmas")
+        assertEquals(0.15, dh.buy, 0.0001)
+        assertEquals(0.25, dh.sell, 0.0001)
+
+        val gr = BrokerCatalog.findById("panin")
+        assertEquals(0.20, gr.buy, 0.0001)
+        assertEquals(0.30, gr.sell, 0.0001)
+
+        val kk = BrokerCatalog.findById("phillip")
+        assertEquals(0.18, kk.buy, 0.0001)
+        assertEquals(0.28, kk.sell, 0.0001)
+
+        val at = BrokerCatalog.findById("phintraco")
+        assertEquals(0.15, at.buy, 0.0001)
+        assertEquals(0.18, at.sell, 0.0001)
+
+        // Newly added brokers
+        val expectedNew = listOf(
+            Triple("paramitra", "PS", 0.10 to 0.20),
+            Triple("lotus", "YJ", 0.15 to 0.25),
+            Triple("megacapital", "CD", 0.17 to 0.28),
+            Triple("minnapadi", "MU", 0.25 to 0.35),
+            Triple("pacific", "AP", 0.20 to 0.30),
+            Triple("pilarmas", "PO", 0.18 to 0.28),
+            Triple("pluangmaju", "RO", 0.30 to 0.30),
+            Triple("profindo", "RG", 0.18 to 0.28)
+        )
+        expectedNew.forEach { (id, code, fees) ->
+            val b = BrokerCatalog.findById(id)
+            assertEquals(code, b.code)
+            assertEquals(fees.first, b.buy, 0.0001)
+            assertEquals(fees.second, b.sell, 0.0001)
+        }
+
         assertTrue(BrokerCatalog.search("YP").any { it.id == "mirae" })
         assertTrue(BrokerCatalog.search("MOST").any { it.id == "mandiri" })
-        assertTrue(BrokerCatalog.search("BIONS").any { it.id == "bni" })
+        assertTrue(BrokerCatalog.search("PS").any { it.id == "paramitra" })
+        assertTrue(BrokerCatalog.search("Lotus").any { it.id == "lotus" })
     }
 
     @Test

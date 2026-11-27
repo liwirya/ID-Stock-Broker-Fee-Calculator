@@ -305,23 +305,11 @@ private fun BrokerRowItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Broker AB Code Square Badge
-            Box(
-                modifier = Modifier
-                    .width(50.dp)
-                    .background(if (isSelected) neo.green else neo.yellow)
-                    .border(BorderStroke(2.dp, neo.ink))
-                    .padding(vertical = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = broker.code,
-                    fontFamily = SpaceMonoFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp,
-                    color = neo.ink
-                )
-            }
+            // Broker Brand Logo Emblem
+            BrokerLogoEmblem(
+                broker = broker,
+                size = 54.dp
+            )
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
