@@ -37,7 +37,9 @@ data class Broker(
     val minimumFeePeriod: String? = null,
     val promotional: Boolean = false,
     val dayTrade: DayTradeConfig = DayTradeConfig(available = false),
-    val notes: String
+    val notes: String,
+    val websiteDomain: String? = null,
+    val fallbackDomain: String? = null
 ) {
     val isCustom: Boolean
         get() = id.startsWith("custom")

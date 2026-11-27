@@ -2,6 +2,7 @@ package com.example.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -25,11 +30,17 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.domain.Broker
 import com.example.ui.theme.LocalNeoBrutalistColors
 import com.example.ui.theme.SpaceMonoFontFamily
@@ -57,6 +68,19 @@ private data class BrokerBrandIdentity(
     val inkOnBg: Color,
     val symbol: BrokerSymbol
 )
+
+private fun buildOfficialIconUrls(broker: Broker): List<String> {
+    if (broker.isCustom) return emptyList()
+    val domains = listOfNotNull(broker.websiteDomain, broker.fallbackDomain).distinct()
+    return buildList {
+        domains.forEach { domain ->
+            add("https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://$domain&size=128")
+        }
+        domains.forEach { domain ->
+            add("https://www.google.com/s2/favicons?domain=$domain&sz=128")
+        }
+    }
+}
 
 private fun brandIdentityFor(brokerId: String): BrokerBrandIdentity = when (brokerId) {
     // Retail & Digital
@@ -116,28 +140,88 @@ fun BrokerLogoEmblem(
     size: Dp = 52.dp
 ) {
     val neo = LocalNeoBrutalistColors.current
+    val context = LocalContext.current
     val identity = remember(broker.id) { brandIdentityFor(broker.id) }
+    val iconUrls = remember(broker.id, broker.websiteDomain, broker.fallbackDomain) {
+        buildOfficialIconUrls(broker)
+    }
+    var attemptIndex by remember(broker.id) { mutableIntStateOf(0) }
+    val currentUrl = iconUrls.getOrNull(attemptIndex)
 
     Column(
         modifier = modifier
             .size(size)
-            .background(identity.bgColor)
+            .background(if (currentUrl != null) neo.card else identity.bgColor)
             .border(BorderStroke(2.dp, neo.ink)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth()
-                .padding(4.dp),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawBrokerSymbol(
-                    symbol = identity.symbol,
-                    primary = identity.accentColor,
-                    secondary = identity.inkOnBg
-                )
+            if (currentUrl != null) {
+                val imageRequest = remember(currentUrl) {
+                    ImageRequest.Builder(context)
+                        .data(currentUrl)
+                        .crossfade(true)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .build()
+                }
+                SubcomposeAsyncImage(
+                    model = imageRequest,
+                    contentDescription = "Logo ${broker.name}",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    val asyncPainter = painter
+                    val state = asyncPainter.state
+                    when (state) {
+                        is AsyncImagePainter.State.Success -> {
+                            val intrinsic = asyncPainter.intrinsicSize
+                            val isTinyDefaultGlobe =
+                                intrinsic.width in 1f..16f && intrinsic.height in 1f..16f
+                            if (isTinyDefaultGlobe && attemptIndex < iconUrls.lastIndex) {
+                                LaunchedEffect(currentUrl) {
+                                    attemptIndex += 1
+                                }
+                                BrokerFallbackCanvas(identity = identity)
+                            } else if (isTinyDefaultGlobe) {
+                                BrokerFallbackCanvas(identity = identity)
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(neo.card)
+                                        .padding(3.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Image(
+                                        painter = asyncPainter,
+                                        contentDescription = "Logo ${broker.name}",
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            }
+                        }
+                        is AsyncImagePainter.State.Error -> {
+                            if (attemptIndex < iconUrls.lastIndex) {
+                                LaunchedEffect(currentUrl) {
+                                    attemptIndex += 1
+                                }
+                            }
+                            BrokerFallbackCanvas(identity = identity)
+                        }
+                        else -> {
+                            BrokerFallbackCanvas(identity = identity)
+                        }
+                    }
+                }
+            } else {
+                BrokerFallbackCanvas(identity = identity)
             }
         }
         Box(
@@ -156,6 +240,27 @@ fun BrokerLogoEmblem(
                 color = neo.card,
                 textAlign = TextAlign.Center,
                 maxLines = 1
+            )
+        }
+    }
+}
+
+@Composable
+private fun BrokerFallbackCanvas(
+    identity: BrokerBrandIdentity
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(identity.bgColor)
+            .padding(4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawBrokerSymbol(
+                symbol = identity.symbol,
+                primary = identity.accentColor,
+                secondary = identity.inkOnBg
             )
         }
     }

@@ -23,7 +23,7 @@ Seluruh perubahan, revisi tarif sekuritas, dan pembaruan fitur dicatat di file i
 - **Profindo Sekuritas Indonesia (RG)** — Beli `0.18%` / Jual `0.28%`
 
 ### Peningkatan UI, Dokumentasi & Rilis
-- **Logo / Emblem Sekuritas**: Menampilkan logo visual khas masing-masing sekuritas di sebelah kiri nama broker pada pemilih broker dan daftar pencarian 38 AB OJK.
+- **Ikon Asli Sekuritas (38 AB OJK)**: Menampilkan ikon resmi dari masing-masing situs sekuritas di sebelah kiri nama broker (dimuat & di-cache otomatis via Coil dengan fallback emblem saat offline).
 - **Format Rilis GitHub**: Judul rilis menggunakan format `Kalkulator Fee Saham BEI (V1.0.1)`, tag berbasis nama aplikasi & versi, serta Release Notes otomatis mengikuti catatan perubahan tiap versi.
 - **Dokumentasi `README.md`**: Penambahan dokumentasi lengkap proyek, daftar sekuritas, panduan instalasi/build, dan contoh perhitungan transaksi.
 

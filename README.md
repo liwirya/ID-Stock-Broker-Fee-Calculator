@@ -8,7 +8,7 @@ Aplikasi Android native (**Fee Saham BEI**) untuk simulasi dan verifikasi biaya 
 
 - **Perhitungan Trade Confirmation BEI Lengkap**: Memecah otomatis tarif *All-In* maupun *Base Fee* menjadi komisi murni broker, PPN Komisi (`11%` efektif PMK 131/2024), *Levy* BEI & jasa KSEI (`0.03%`), biaya kliring KPEI (`0.01%` Reguler/Tunai & `0.009%` Pasar Negosiasi), PPN *Levy* (`0.0033%`), serta PPh Final penjualan (`0.10%`).
 - **5 Jenis Pasar Transaksi BEI**: Mendukung **Pasar Reguler (RG | T+2)**, **Pasar Negosiasi (NG | Satuan Lembar)**, **Pasar Tunai (TN | T+0)**, **Day Trade / Intraday**, dan **Transaksi e-IPO** (`0%` biaya saat penjatahan beli).
-- **38 Sekuritas Anggota Bursa OJK + Logo & Pencarian Cepat**: Dilengkapi logo visual khas di samping nama masing-masing sekuritas, pencarian instan berdasarkan nama/kode AB/nama aplikasi (`XL`, `YP`, `MOST`, `BIONS`, dll.), penyimpanan broker default otomatis offline, serta 2 mode tarif *Custom* (*All-In* & *Base Fee*).
+- **38 Sekuritas Anggota Bursa OJK + Ikon Asli & Pencarian Cepat**: Dilengkapi ikon resmi masing-masing sekuritas (dimuat dari domain resmi dengan *disk cache* dan fallback emblem saat offline), pencarian instan berdasarkan nama/kode AB/nama aplikasi (`XL`, `YP`, `MOST`, `BIONS`, dll.), penyimpanan broker default otomatis offline, serta 2 mode tarif *Custom* (*All-In* & *Base Fee*).
 - **Simulasi *Break-Even Point* (BEP) & Minimum Fee**: Menghitung harga jual minimal impas per lembar dan otomatis menerapkan aturan *minimum fee* harian untuk sekuritas tertentu (seperti Mandiri Sekuritas `Rp 5.000/hari`).
 - **Estimasi *e-Meterai* (PMK 134/2021)**: Opsi perhitungan bea meterai `Rp 10.000` untuk nilai transaksi di atas `Rp 10.000.000` (termasuk aturan akumulasi harian untuk *Day Trade*).
 - **Salin & Bagikan Trade Confirmation**: Satu ketukan untuk menyalin rincian perhitungan ke clipboard atau membagikannya langsung melalui *Android Share Sheet*.
@@ -51,6 +51,7 @@ Aplikasi Android native (**Fee Saham BEI**) untuk simulasi dan verifikasi biaya 
 - **Kotlin** — Bahasa pemrograman utama aplikasi Android.
 - **Jetpack Compose & Material 3** — Antarmuka deklaratif native bergaya Neo-Brutalist dengan dukungan tata letak adaptif (ponsel & tablet) serta *edge-to-edge*.
 - **Jetpack DataStore Preferences** — Penyimpanan preferensi broker default secara lokal (*offline*).
+- **Coil Compose** — Pemuatan & *caching* ikon resmi 38 sekuritas dari domain resmi masing-masing dengan fallback otomatis saat offline.
 - **MVVM (`ViewModel` + `StateFlow`)** — Manajemen state reaktif yang terpisah dari mesin kalkulasi domain.
 - **Google Fonts Lokal (`Space Grotesk` & `Space Mono`)** — Bundling font `.ttf` langsung di resource aplikasi tanpa ketergantungan jaringan.
 - **Gradle 9.3.1 & AGP 9.1.1 + GitHub Actions** — Otomatisasi build Debug APK dan publikasi langsung ke **GitHub Releases**.
@@ -121,7 +122,7 @@ Fee-Saham-BEI/
 │       │   │   └── ui/
 │       │   │       ├── CalculatorScreen.kt              # Layar utama Neo-Brutalist adaptif
 │       │   │       ├── components/
-│       │   │       │   ├── BrokerLogo.kt                # Emblem logo visual tiap sekuritas
+│       │   │       │   ├── BrokerLogo.kt                # Pemuat ikon resmi sekuritas (Coil + fallback)
 │       │   │       │   ├── BrokerPickerSheet.kt         # Modal pencarian cepat 38 broker
 │       │   │       │   ├── NeoBrutalistPrimitives.kt    # Komponen kartu, tombol & input
 │       │   │       │   └── ResultSections.kt            # Kartu Net RDN & Trade Confirmation
@@ -174,7 +175,7 @@ Misalkan Anda membeli saham **BBCA** pada **Pasar Reguler (RG)** dengan rincian 
   - Phillip Sekuritas Indonesia (`KK`): Beli `0.18%` / Jual `0.28%`.
   - Phintraco Sekuritas (`AT`): Beli `0.15%` / Jual `0.18%`.
 - **Penambahan 8 Sekuritas Baru**: Paramitra Alfa (`PS`), Lotus Andalan (`YJ`), Mega Capital (`CD`), Minna Padi Investama (`MU`), Pacific Sekuritas (`AP`), Pilarmas Investindo (`PO`), Pluang Maju (`RO`), dan Profindo Sekuritas (`RG`).
-- **Logo Visual Sekuritas**: Menambahkan logo/emblem khas masing-masing sekuritas di sebelah kiri nama broker pada pemilih broker dan daftar pencarian.
+- **Ikon Resmi Sekuritas**: Menampilkan ikon asli dari situs resmi masing-masing sekuritas di sebelah kiri nama broker (menggunakan Coil + cache lokal dan fallback emblem saat offline).
 - **Pembaruan CI/CD & Dokumentasi**: Penamaan rilis GitHub `Kalkulator Fee Saham BEI (V1.0.1)`, tag berbasis nama aplikasi & versi, Release Notes otomatis dari `CHANGELOG.md`, serta pembaruan `README.md`.
 
 ### `V1.0.0`

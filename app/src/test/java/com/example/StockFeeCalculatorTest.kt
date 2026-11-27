@@ -168,6 +168,10 @@ class StockFeeCalculatorTest {
             assertEquals(fees.second, b.sell, 0.0001)
         }
 
+        val nonCustomBrokers = BrokerCatalog.allBrokers.filterNot { it.isCustom }
+        assertEquals(38, nonCustomBrokers.size)
+        assertTrue(nonCustomBrokers.all { !it.websiteDomain.isNullOrBlank() })
+
         assertTrue(BrokerCatalog.search("YP").any { it.id == "mirae" })
         assertTrue(BrokerCatalog.search("MOST").any { it.id == "mandiri" })
         assertTrue(BrokerCatalog.search("PS").any { it.id == "paramitra" })

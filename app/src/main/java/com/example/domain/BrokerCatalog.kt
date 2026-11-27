@@ -16,7 +16,8 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.RETAIL_DIGITAL,
             dayTrade = DayTradeConfig(available = true, buy = 0.15, sell = 0.25),
-            notes = "Tarif All-In (sudah termasuk Levy 0.0433%, PPN, & PPh 0.1%)"
+            notes = "Tarif All-In (sudah termasuk Levy 0.0433%, PPN, & PPh 0.1%)",
+            websiteDomain = "stockbit.com"
         ),
         Broker(
             id = "ajaib",
@@ -28,7 +29,8 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.RETAIL_DIGITAL,
             dayTrade = DayTradeConfig(available = true, buy = 0.1513, sell = 0.2513),
-            notes = "Tarif All-In sesuai penyesuaian PPN PMK 131/2024 (+0.1% jika Market Order)"
+            notes = "Tarif All-In sesuai penyesuaian PPN PMK 131/2024 (+0.1% jika Market Order)",
+            websiteDomain = "ajaib.co.id"
         ),
         Broker(
             id = "mirae",
@@ -40,7 +42,9 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.RETAIL_DIGITAL,
             dayTrade = DayTradeConfig(available = true, buy = 0.08, sell = 0.18),
-            notes = "Akun Reguler 0.15%/0.25%; Akun Khusus Day Trade otomatis 0.08%/0.18%"
+            notes = "Akun Reguler 0.15%/0.25%; Akun Khusus Day Trade otomatis 0.08%/0.18%",
+            websiteDomain = "miraeasset.co.id",
+            fallbackDomain = "sekuritas.miraeasset.co.id"
         ),
         Broker(
             id = "ipot",
@@ -52,7 +56,8 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.RETAIL_DIGITAL,
             dayTrade = DayTradeConfig(available = true, buy = 0.19, sell = 0.29),
-            notes = "Tarif All-In Online Trading IPOT"
+            notes = "Tarif All-In Online Trading IPOT",
+            websiteDomain = "indopremier.com"
         ),
         Broker(
             id = "pluang_plu",
@@ -64,7 +69,8 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.RETAIL_DIGITAL,
             dayTrade = DayTradeConfig(available = false),
-            notes = "Tarif All-In terintegrasi Anggota Bursa berizin OJK"
+            notes = "Tarif All-In terintegrasi Anggota Bursa berizin OJK",
+            websiteDomain = "pluang.com"
         ),
         Broker(
             id = "pluangmaju",
@@ -76,7 +82,9 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.RETAIL_DIGITAL,
             dayTrade = DayTradeConfig(available = false),
-            notes = "Tarif All-In Pluang Maju Sekuritas (RO)"
+            notes = "Tarif All-In Pluang Maju Sekuritas (RO)",
+            websiteDomain = "pluangmajusekuritas.com",
+            fallbackDomain = "pluang.com"
         ),
 
         // === BUMN / BANK-BACKED SEKURITAS ===
@@ -92,7 +100,9 @@ object BrokerCatalog {
             minimumFee = 5000.0,
             minimumFeePeriod = "daily",
             dayTrade = DayTradeConfig(available = true, buy = 0.10, sell = 0.20),
-            notes = "Berlaku minimum fee komisi Rp 5.000/hari untuk akun reguler tertentu"
+            notes = "Berlaku minimum fee komisi Rp 5.000/hari untuk akun reguler tertentu",
+            websiteDomain = "mandirisekuritas.co.id",
+            fallbackDomain = "most.co.id"
         ),
         Broker(
             id = "bni",
@@ -104,7 +114,9 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.BUMN_BANK,
             dayTrade = DayTradeConfig(available = true, buy = 0.12, sell = 0.22),
-            notes = "Tarif All-In BIONS Online"
+            notes = "Tarif All-In BIONS Online",
+            websiteDomain = "bnisekuritas.co.id",
+            fallbackDomain = "bions.id"
         ),
         Broker(
             id = "bri",
@@ -116,7 +128,9 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.BUMN_BANK,
             dayTrade = DayTradeConfig(available = true, buy = 0.17, sell = 0.27),
-            notes = "Tarif All-In BRIGHTS Online"
+            notes = "Tarif All-In BRIGHTS Online",
+            websiteDomain = "bridanareksasekuritas.co.id",
+            fallbackDomain = "brights.id"
         ),
         Broker(
             id = "bca",
@@ -128,7 +142,9 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.BUMN_BANK,
             dayTrade = DayTradeConfig(available = false),
-            notes = "Tarif All-In BEST Online Trading"
+            notes = "Tarif All-In BEST Online Trading",
+            websiteDomain = "bcasekuritas.co.id",
+            fallbackDomain = "bca.co.id"
         ),
         Broker(
             id = "bahana",
@@ -140,7 +156,8 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.BUMN_BANK,
             dayTrade = DayTradeConfig(available = false),
-            notes = "Tarif standar online trading BUMN"
+            notes = "Tarif standar online trading BUMN",
+            websiteDomain = "bahanasekuritas.id"
         ),
 
         // === SEKURITAS SWASTA & ASING POPULER ===
@@ -155,7 +172,8 @@ object BrokerCatalog {
             category = BrokerCategory.SWASTA_ASING,
             promotional = true,
             dayTrade = DayTradeConfig(available = false),
-            notes = "Tarif All-In Aplikasi Hei5"
+            notes = "Tarif All-In Aplikasi Hei5",
+            websiteDomain = "pancaglobal.co.id"
         ),
         Broker(
             id = "paramitra",
@@ -168,7 +186,9 @@ object BrokerCatalog {
             category = BrokerCategory.SWASTA_ASING,
             promotional = true,
             dayTrade = DayTradeConfig(available = false),
-            notes = "Tarif All-In Paramitra Alfa Sekuritas"
+            notes = "Tarif All-In Paramitra Alfa Sekuritas",
+            websiteDomain = "alphainvestasi.id",
+            fallbackDomain = "paramitra.com"
         ),
         Broker(
             id = "kisi",
@@ -181,7 +201,8 @@ object BrokerCatalog {
             category = BrokerCategory.SWASTA_ASING,
             promotional = true,
             dayTrade = DayTradeConfig(available = true, buy = 0.13, sell = 0.23),
-            notes = "Aplikasi KOINS / iKISI"
+            notes = "Aplikasi KOINS / iKISI",
+            websiteDomain = "kisi.co.id"
         ),
         Broker(
             id = "phintraco",
@@ -193,7 +214,8 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
             dayTrade = DayTradeConfig(available = false),
-            notes = "Tarif All-In Profits Anywhere"
+            notes = "Tarif All-In Profits Anywhere",
+            websiteDomain = "phintracosekuritas.com"
         ),
         Broker(
             id = "sinarmas",
@@ -205,7 +227,9 @@ object BrokerCatalog {
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
             dayTrade = DayTradeConfig(available = true, buy = 0.125, sell = 0.225),
-            notes = "Aplikasi SimInvest"
+            notes = "Aplikasi SimInvest",
+            websiteDomain = "sinarmassekuritas.co.id",
+            fallbackDomain = "siminvest.id"
         ),
         Broker(
             id = "lotus",
@@ -216,7 +240,9 @@ object BrokerCatalog {
             sell = 0.25,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In LOTS Online Trading"
+            notes = "Tarif All-In LOTS Online Trading",
+            websiteDomain = "lotussekuritas.com",
+            fallbackDomain = "lots.co.id"
         ),
         Broker(
             id = "kbvalbury",
@@ -227,7 +253,8 @@ object BrokerCatalog {
             sell = 0.25,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Online Trading"
+            notes = "Tarif All-In Online Trading",
+            websiteDomain = "kbvalbury.com"
         ),
         Broker(
             id = "sucor",
@@ -238,7 +265,8 @@ object BrokerCatalog {
             sell = 0.25,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In SPOT"
+            notes = "Tarif All-In SPOT",
+            websiteDomain = "sucorsekuritas.com"
         ),
         Broker(
             id = "rhb",
@@ -249,7 +277,9 @@ object BrokerCatalog {
             sell = 0.25,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In RHB TradeSmart"
+            notes = "Tarif All-In RHB TradeSmart",
+            websiteDomain = "rhbtradesmart.co.id",
+            fallbackDomain = "rhbgroup.com"
         ),
         Broker(
             id = "samuel",
@@ -260,7 +290,9 @@ object BrokerCatalog {
             sell = 0.25,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In STAR Online"
+            notes = "Tarif All-In STAR Online",
+            websiteDomain = "star.id",
+            fallbackDomain = "samuel.co.id"
         ),
         Broker(
             id = "yuanta",
@@ -271,7 +303,8 @@ object BrokerCatalog {
             sell = 0.25,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In YSinvest"
+            notes = "Tarif All-In YSinvest",
+            websiteDomain = "yuanta.co.id"
         ),
         Broker(
             id = "megacapital",
@@ -282,7 +315,9 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In InvestasiKu / M-Trade"
+            notes = "Tarif All-In InvestasiKu / M-Trade",
+            websiteDomain = "megasekuritas.id",
+            fallbackDomain = "investasiku.id"
         ),
         Broker(
             id = "nhkorindo",
@@ -293,7 +328,9 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In NAIK / Online Trading"
+            notes = "Tarif All-In NAIK / Online Trading",
+            websiteDomain = "nhis.co.id",
+            fallbackDomain = "nhsec.co.id"
         ),
         Broker(
             id = "phillip",
@@ -304,7 +341,9 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In POEMS ID"
+            notes = "Tarif All-In POEMS ID",
+            websiteDomain = "phillip.co.id",
+            fallbackDomain = "poems.co.id"
         ),
         Broker(
             id = "pilarmas",
@@ -315,7 +354,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Pilarmas Online Trading"
+            notes = "Tarif All-In Pilarmas Online Trading",
+            websiteDomain = "pilarmas-investindo.co.id"
         ),
         Broker(
             id = "profindo",
@@ -326,7 +366,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In ProClick Online Trading"
+            notes = "Tarif All-In ProClick Online Trading",
+            websiteDomain = "profindo.com"
         ),
         Broker(
             id = "cgs",
@@ -337,7 +378,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In CGS iTrade"
+            notes = "Tarif All-In CGS iTrade",
+            websiteDomain = "cgsi.co.id"
         ),
         Broker(
             id = "trimegah",
@@ -348,7 +390,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Online Trading"
+            notes = "Tarif All-In Online Trading",
+            websiteDomain = "trimegah.com"
         ),
         Broker(
             id = "henan",
@@ -359,7 +402,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In HPX Online"
+            notes = "Tarif All-In HPX Online",
+            websiteDomain = "hpsekuritas.id"
         ),
         Broker(
             id = "mnc",
@@ -370,7 +414,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In MotionTrade"
+            notes = "Tarif All-In MotionTrade",
+            websiteDomain = "mncsekuritas.id"
         ),
         Broker(
             id = "kiwoom",
@@ -381,7 +426,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In HERO"
+            notes = "Tarif All-In HERO",
+            websiteDomain = "kiwoom.co.id"
         ),
         Broker(
             id = "ciptadana",
@@ -392,7 +438,8 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Online"
+            notes = "Tarif All-In Online",
+            websiteDomain = "ciptadana.com"
         ),
         Broker(
             id = "maybank",
@@ -403,7 +450,9 @@ object BrokerCatalog {
             sell = 0.28,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Maybank Trade ID"
+            notes = "Tarif All-In Maybank Trade ID",
+            websiteDomain = "maybank-ke.co.id",
+            fallbackDomain = "maybank.co.id"
         ),
         Broker(
             id = "panin",
@@ -414,7 +463,8 @@ object BrokerCatalog {
             sell = 0.30,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In POST Online"
+            notes = "Tarif All-In POST Online",
+            websiteDomain = "pans.co.id"
         ),
         Broker(
             id = "pacific",
@@ -425,7 +475,9 @@ object BrokerCatalog {
             sell = 0.30,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Pacific Sekuritas Indonesia"
+            notes = "Tarif All-In Pacific Sekuritas Indonesia",
+            websiteDomain = "pacificsekuritas.id",
+            fallbackDomain = "pacificcapital.co.id"
         ),
         Broker(
             id = "minnapadi",
@@ -436,7 +488,8 @@ object BrokerCatalog {
             sell = 0.35,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In Minna Padi Investama Sekuritas"
+            notes = "Tarif All-In Minna Padi Investama Sekuritas",
+            websiteDomain = "minnapadi.com"
         ),
         Broker(
             id = "uob",
@@ -447,7 +500,9 @@ object BrokerCatalog {
             sell = 0.35,
             feeMode = FeeMode.ALL_IN,
             category = BrokerCategory.SWASTA_ASING,
-            notes = "Tarif All-In UTRADE"
+            notes = "Tarif All-In UTRADE",
+            websiteDomain = "utrade.co.id",
+            fallbackDomain = "uobkayhian.com"
         ),
 
         // === MODE CUSTOM ===
