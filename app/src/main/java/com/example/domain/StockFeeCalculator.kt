@@ -7,6 +7,7 @@ import kotlin.math.max
 import kotlin.math.roundToLong
 
 data class CalculationInput(
+    val stockSymbol: String = "",
     val marketType: MarketType,
     val broker: Broker,
     val buyPrice: Double,
@@ -18,6 +19,7 @@ data class CalculationInput(
 )
 
 data class CalculationResult(
+    val stockSymbol: String,
     val resultMarketTag: String,
     val brokerName: String,
     val brokerCode: String,
@@ -52,6 +54,7 @@ object StockFeeCalculator {
     fun calculate(input: CalculationInput): CalculationResult {
         val rule = input.marketType
         val broker = input.broker
+        val normalizedSymbol = input.stockSymbol.trim().uppercase()
 
         val buyPrice = input.buyPrice.coerceAtLeast(0.0)
         val sellPrice = input.sellPrice.coerceAtLeast(0.0)
@@ -75,12 +78,10 @@ object StockFeeCalculator {
         var brokerVatTotal: Double
 
         if (broker.feeMode == FeeMode.BASE_FEE) {
-            // Mode Base Fee: input adalah komisi murni broker
             brokerPureBuyFee = buyValue * inputBuyRate
             brokerPureSellFee = sellValue * inputSellRate
             brokerVatTotal = (brokerPureBuyFee + brokerPureSellFee) * RegulatorRates.VAT_EFFECTIVE
         } else {
-            // Mode All-In: pecah komisi murni broker dari total tarif All-In agar tidak double counting
             val netBrokerBuyWithVatRate = if (rule.freeBuy) 0.0 else max(0.0, inputBuyRate - totalRegBuyRate)
             val netBrokerSellWithVatRate = max(0.0, inputSellRate - totalRegSellRate)
 
@@ -154,6 +155,7 @@ object StockFeeCalculator {
         }
 
         return CalculationResult(
+            stockSymbol = normalizedSymbol,
             resultMarketTag = "${broker.code} • ${rule.resTag}",
             brokerName = broker.name,
             brokerCode = broker.code,
@@ -232,6 +234,9 @@ object StockFeeCalculator {
 
         return buildString {
             appendLine("=== TRADE CONFIRMATION • FEE SAHAM BEI ===")
+            if (result.stockSymbol.isNotBlank()) {
+                appendLine("Saham   : ${result.stockSymbol}")
+            }
             appendLine("Pasar   : ${result.marketType.badge}")
             appendLine("Broker  : ${result.brokerName} (${result.brokerCode})")
             appendLine("Beli    : ${formatIdr(result.buyPrice)} | Jual: ${formatIdr(result.sellPrice)}")

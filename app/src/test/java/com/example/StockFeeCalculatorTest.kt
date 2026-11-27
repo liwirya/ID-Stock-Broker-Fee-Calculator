@@ -184,4 +184,26 @@ class StockFeeCalculatorTest {
         assertEquals("Rp 95.750", StockFeeCalculator.formatIdr(95750.0))
         assertEquals("-Rp 12.345", StockFeeCalculator.formatIdr(-12345.0))
     }
+
+    @Test
+    fun `stock symbol is normalized uppercase and included in share summary`() {
+        val kisi = BrokerCatalog.findById("kisi")
+        val res = StockFeeCalculator.calculate(
+            CalculationInput(
+                stockSymbol = "  irsx ",
+                marketType = MarketType.REGULAR,
+                broker = kisi,
+                buyPrice = 212.0,
+                sellPrice = 218.0,
+                volume = 10.0,
+                buyFeePct = kisi.buy,
+                sellFeePct = kisi.sell,
+                includeStamp = false
+            )
+        )
+
+        assertEquals("IRSX", res.stockSymbol)
+        val shareText = StockFeeCalculator.formatTradeConfirmationShareText(res)
+        assertTrue(shareText.contains("Saham   : IRSX"))
+    }
 }

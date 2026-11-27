@@ -3,7 +3,6 @@ package com.example
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,13 +12,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.data.BrokerPreferencesRepository
 import com.example.domain.CalculationResult
 import com.example.domain.StockFeeCalculator
 import com.example.presentation.CalculatorViewModel
 import com.example.ui.CalculatorScreen
+import com.example.ui.components.ShareCardRenderer
+import com.example.ui.components.ShareCardTheme
+import com.example.ui.components.ShareDestination
 import com.example.ui.theme.FeeSahamTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +47,8 @@ class MainActivity : ComponentActivity() {
             FeeSahamTheme {
                 CalculatorScreen(
                     uiState = uiState,
+                    onStockSymbolChanged = calculatorViewModel::onStockSymbolChanged,
+                    onQuickTickerSelected = calculatorViewModel::onQuickTickerSelected,
                     onMarketSelected = calculatorViewModel::onMarketSelected,
                     onOpenBrokerSheet = calculatorViewModel::onOpenBrokerSheet,
                     onDismissBrokerSheet = calculatorViewModel::onDismissBrokerSheet,
@@ -56,7 +64,13 @@ class MainActivity : ComponentActivity() {
                     onExampleBbcaClicked = calculatorViewModel::onExampleBbcaClicked,
                     onResetClicked = calculatorViewModel::onResetClicked,
                     onCopySummary = { result -> copyTradeConfirmation(result) },
-                    onShareSummary = { result -> shareTradeConfirmation(result) }
+                    onOpenShareSheet = calculatorViewModel::onOpenShareSheet,
+                    onDismissShareSheet = calculatorViewModel::onDismissShareSheet,
+                    onShareThemeSelected = calculatorViewModel::onShareThemeSelected,
+                    onToggleShowRupiah = calculatorViewModel::onToggleShowRupiah,
+                    onShareDestination = { result, theme, showRupiah, destination, onDone ->
+                        handleShareCardDestination(result, theme, showRupiah, destination, onDone)
+                    }
                 )
             }
         }
@@ -69,15 +83,54 @@ class MainActivity : ComponentActivity() {
         clipboard.setPrimaryClip(clip)
     }
 
-    private fun shareTradeConfirmation(result: CalculationResult) {
-        val text = StockFeeCalculator.formatTradeConfirmationShareText(result)
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
-            putExtra(Intent.EXTRA_TEXT, text)
+    private fun handleShareCardDestination(
+        result: CalculationResult,
+        theme: ShareCardTheme,
+        showRupiah: Boolean,
+        destination: ShareDestination,
+        onDone: (Boolean) -> Unit
+    ) {
+        lifecycleScope.launch {
+            val bitmap = withContext(Dispatchers.Default) {
+                ShareCardRenderer.renderBitmap(
+                    context = applicationContext,
+                    result = result,
+                    theme = theme,
+                    showRupiah = showRupiah,
+                    widthPx = 1080,
+                    heightPx = 1350
+                )
+            }
+
+            if (destination == ShareDestination.SAVE_GALLERY) {
+                val stockTag = result.stockSymbol.ifBlank { "BEI" }
+                val saved = withContext(Dispatchers.IO) {
+                    ShareCardRenderer.saveCardToGallery(
+                        context = applicationContext,
+                        bitmap = bitmap,
+                        fileBaseName = "FeeSaham_${stockTag}"
+                    )
+                }
+                onDone(saved)
+            } else {
+                val caption = StockFeeCalculator.formatTradeConfirmationShareText(result)
+                val chooserTitle = getString(R.string.share_chooser_title)
+                val uri = withContext(Dispatchers.IO) {
+                    ShareCardRenderer.writeShareCardToCache(applicationContext, bitmap)
+                }
+                try {
+                    ShareCardRenderer.launchShareIntent(
+                        context = this@MainActivity,
+                        uri = uri,
+                        destination = destination,
+                        captionText = caption,
+                        chooserTitle = chooserTitle
+                    )
+                    onDone(true)
+                } catch (_: Exception) {
+                    onDone(false)
+                }
+            }
         }
-        startActivity(
-            Intent.createChooser(shareIntent, getString(R.string.share_chooser_title))
-        )
     }
 }

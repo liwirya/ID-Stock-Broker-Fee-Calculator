@@ -11,6 +11,9 @@ import com.example.domain.CalculationResult
 import com.example.domain.MarketType
 import com.example.domain.StockFeeCalculator
 import com.example.domain.UnitMode
+import com.example.ui.components.ShareCardTheme
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class CalculatorUiState(
+    val stockSymbolText: String = "",
     val selectedMarket: MarketType = MarketType.REGULAR,
     val selectedBroker: Broker = BrokerCatalog.findById(BrokerCatalog.DEFAULT_BROKER_ID),
     val defaultBrokerId: String = BrokerCatalog.DEFAULT_BROKER_ID,
@@ -31,10 +35,14 @@ data class CalculatorUiState(
     val totalSharesPreview: String = "1000",
     val hasCalculatedOnce: Boolean = false,
     val isStale: Boolean = false,
+    val isCalculating: Boolean = false,
     val result: CalculationResult? = null,
     val scrollToResultTrigger: Int = 0,
     val isBrokerSheetOpen: Boolean = false,
-    val brokerSearchQuery: String = ""
+    val brokerSearchQuery: String = "",
+    val isShareSheetOpen: Boolean = false,
+    val selectedShareTheme: ShareCardTheme = ShareCardTheme.CANDLE_DARK,
+    val showRupiahOnCard: Boolean = true
 )
 
 class CalculatorViewModel(
@@ -43,6 +51,8 @@ class CalculatorViewModel(
 
     private val _uiState = MutableStateFlow(CalculatorUiState())
     val uiState: StateFlow<CalculatorUiState> = _uiState.asStateFlow()
+
+    private var calculateJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -57,6 +67,28 @@ class CalculatorViewModel(
                     sellFeePctText = fees.second
                 )
             }
+        }
+    }
+
+    fun onStockSymbolChanged(raw: String) {
+        val cleaned = raw
+            .filter { it.isLetterOrDigit() || it == ' ' || it == '.' || it == '-' }
+            .take(24)
+            .uppercase()
+        _uiState.update { state ->
+            state.copy(
+                stockSymbolText = cleaned,
+                isStale = state.hasCalculatedOnce
+            )
+        }
+    }
+
+    fun onQuickTickerSelected(ticker: String) {
+        _uiState.update { state ->
+            state.copy(
+                stockSymbolText = ticker.uppercase(),
+                isStale = state.hasCalculatedOnce
+            )
         }
     }
 
@@ -176,66 +208,88 @@ class CalculatorViewModel(
     }
 
     fun onCalculateClicked() {
-        _uiState.update { state ->
-            val calcResult = StockFeeCalculator.calculate(
-                CalculationInput(
-                    marketType = state.selectedMarket,
-                    broker = state.selectedBroker,
-                    buyPrice = state.buyPriceText.toDoubleOrNull() ?: 0.0,
-                    sellPrice = state.sellPriceText.toDoubleOrNull() ?: 0.0,
-                    volume = state.volumeText.toDoubleOrNull() ?: 0.0,
-                    buyFeePct = state.buyFeePctText.toDoubleOrNull() ?: 0.0,
-                    sellFeePct = state.sellFeePctText.toDoubleOrNull() ?: 0.0,
-                    includeStamp = state.includeStamp
+        calculateJob?.cancel()
+        calculateJob = viewModelScope.launch {
+            _uiState.update { it.copy(isCalculating = true, isStale = false) }
+            delay(380)
+            _uiState.update { state ->
+                val calcResult = StockFeeCalculator.calculate(
+                    CalculationInput(
+                        stockSymbol = state.stockSymbolText,
+                        marketType = state.selectedMarket,
+                        broker = state.selectedBroker,
+                        buyPrice = state.buyPriceText.toDoubleOrNull() ?: 0.0,
+                        sellPrice = state.sellPriceText.toDoubleOrNull() ?: 0.0,
+                        volume = state.volumeText.toDoubleOrNull() ?: 0.0,
+                        buyFeePct = state.buyFeePctText.toDoubleOrNull() ?: 0.0,
+                        sellFeePct = state.sellFeePctText.toDoubleOrNull() ?: 0.0,
+                        includeStamp = state.includeStamp
+                    )
                 )
-            )
-            state.copy(
-                result = calcResult,
-                hasCalculatedOnce = true,
-                isStale = false,
-                scrollToResultTrigger = state.scrollToResultTrigger + 1
-            )
+                state.copy(
+                    result = calcResult,
+                    hasCalculatedOnce = true,
+                    isStale = false,
+                    isCalculating = false,
+                    scrollToResultTrigger = state.scrollToResultTrigger + 1
+                )
+            }
         }
     }
 
     fun onExampleBbcaClicked() {
         val stockbit = BrokerCatalog.findById(BrokerCatalog.DEFAULT_BROKER_ID)
-        _uiState.update { state ->
+        calculateJob?.cancel()
+        calculateJob = viewModelScope.launch {
             val market = MarketType.REGULAR
-            val calcResult = StockFeeCalculator.calculate(
-                CalculationInput(
-                    marketType = market,
-                    broker = stockbit,
-                    buyPrice = 9500.0,
-                    sellPrice = 9800.0,
-                    volume = 10.0,
-                    buyFeePct = stockbit.buy,
-                    sellFeePct = stockbit.sell,
-                    includeStamp = state.includeStamp
+            _uiState.update { state ->
+                state.copy(
+                    stockSymbolText = "BBCA",
+                    selectedMarket = market,
+                    selectedBroker = stockbit,
+                    buyPriceText = "9500",
+                    sellPriceText = "9800",
+                    volumeText = "10",
+                    buyFeePctText = formatRate(stockbit.buy),
+                    sellFeePctText = formatRate(stockbit.sell),
+                    totalSharesPreview = computeSharesPreview(market, "10"),
+                    isCalculating = true,
+                    isStale = false
                 )
-            )
-            state.copy(
-                selectedMarket = market,
-                selectedBroker = stockbit,
-                buyPriceText = "9500",
-                sellPriceText = "9800",
-                volumeText = "10",
-                buyFeePctText = formatRate(stockbit.buy),
-                sellFeePctText = formatRate(stockbit.sell),
-                totalSharesPreview = computeSharesPreview(market, "10"),
-                result = calcResult,
-                hasCalculatedOnce = true,
-                isStale = false,
-                scrollToResultTrigger = state.scrollToResultTrigger + 1
-            )
+            }
+            delay(360)
+            _uiState.update { state ->
+                val calcResult = StockFeeCalculator.calculate(
+                    CalculationInput(
+                        stockSymbol = "BBCA",
+                        marketType = market,
+                        broker = stockbit,
+                        buyPrice = 9500.0,
+                        sellPrice = 9800.0,
+                        volume = 10.0,
+                        buyFeePct = stockbit.buy,
+                        sellFeePct = stockbit.sell,
+                        includeStamp = state.includeStamp
+                    )
+                )
+                state.copy(
+                    result = calcResult,
+                    hasCalculatedOnce = true,
+                    isStale = false,
+                    isCalculating = false,
+                    scrollToResultTrigger = state.scrollToResultTrigger + 1
+                )
+            }
         }
     }
 
     fun onResetClicked() {
+        calculateJob?.cancel()
         _uiState.update { state ->
             val defaultBroker = BrokerCatalog.findById(state.defaultBrokerId)
             val market = MarketType.REGULAR
             state.copy(
+                stockSymbolText = "",
                 selectedMarket = market,
                 selectedBroker = defaultBroker,
                 buyPriceText = "1000",
@@ -247,7 +301,9 @@ class CalculatorViewModel(
                 totalSharesPreview = computeSharesPreview(market, "10"),
                 hasCalculatedOnce = false,
                 isStale = false,
-                result = null
+                isCalculating = false,
+                result = null,
+                isShareSheetOpen = false
             )
         }
     }
@@ -262,6 +318,24 @@ class CalculatorViewModel(
 
     fun onBrokerSearchQueryChanged(query: String) {
         _uiState.update { it.copy(brokerSearchQuery = query) }
+    }
+
+    fun onOpenShareSheet() {
+        if (_uiState.value.result != null) {
+            _uiState.update { it.copy(isShareSheetOpen = true) }
+        }
+    }
+
+    fun onDismissShareSheet() {
+        _uiState.update { it.copy(isShareSheetOpen = false) }
+    }
+
+    fun onShareThemeSelected(theme: ShareCardTheme) {
+        _uiState.update { it.copy(selectedShareTheme = theme) }
+    }
+
+    fun onToggleShowRupiah(show: Boolean) {
+        _uiState.update { it.copy(showRupiahOnCard = show) }
     }
 
     private fun resolveFees(

@@ -91,6 +91,24 @@ fun NetRdnResultCard(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                if (result.stockSymbol.isNotBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .background(neo.yellow)
+                            .border(BorderStroke(2.dp, neo.ink))
+                            .padding(horizontal = 10.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.label_stock_profit_badge, result.stockSymbol),
+                            fontFamily = SpaceMonoFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.5.sp,
+                            letterSpacing = 0.5.sp,
+                            color = neo.ink
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 Text(
                     text = stringResource(R.string.label_net_profit_loss).uppercase(),
                     fontFamily = SpaceGroteskFontFamily,
@@ -262,6 +280,12 @@ fun TradeConfirmationCard(
         Spacer(modifier = Modifier.height(14.dp))
         NeoSectionTag(text = stringResource(R.string.group_tx_value))
         Spacer(modifier = Modifier.height(4.dp))
+        if (result.stockSymbol.isNotBlank()) {
+            BreakdownRow(
+                label = stringResource(R.string.row_stock_name),
+                value = result.stockSymbol
+            )
+        }
         BreakdownRow(
             label = stringResource(R.string.row_buy_value),
             value = StockFeeCalculator.formatIdr(result.buyValue)

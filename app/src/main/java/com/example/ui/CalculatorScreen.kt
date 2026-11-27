@@ -11,6 +11,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -33,10 +36,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
@@ -47,6 +53,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -67,15 +74,18 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -90,12 +100,17 @@ import com.example.domain.MarketType
 import com.example.presentation.CalculatorUiState
 import com.example.ui.components.BrokerLogoEmblem
 import com.example.ui.components.BrokerPickerSheet
+import com.example.ui.components.CalculatingLoadingCard
+import com.example.ui.components.FlexingShareSheet
 import com.example.ui.components.NeoButton
 import com.example.ui.components.NeoCard
 import com.example.ui.components.NeoMarketPill
 import com.example.ui.components.NeoNumericField
 import com.example.ui.components.NeoSectionTag
 import com.example.ui.components.NetRdnResultCard
+import com.example.ui.components.ShareCardTheme
+import com.example.ui.components.ShareDestination
+import com.example.ui.components.SplashLoadingOverlay
 import com.example.ui.components.TradeConfirmationCard
 import com.example.ui.components.dottedCanvasBackground
 import com.example.ui.theme.LocalNeoBrutalistColors
@@ -107,6 +122,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CalculatorScreen(
     uiState: CalculatorUiState,
+    onStockSymbolChanged: (String) -> Unit,
+    onQuickTickerSelected: (String) -> Unit,
     onMarketSelected: (MarketType) -> Unit,
     onOpenBrokerSheet: () -> Unit,
     onDismissBrokerSheet: () -> Unit,
@@ -122,7 +139,11 @@ fun CalculatorScreen(
     onExampleBbcaClicked: () -> Unit,
     onResetClicked: () -> Unit,
     onCopySummary: (CalculationResult) -> Unit,
-    onShareSummary: (CalculationResult) -> Unit
+    onOpenShareSheet: () -> Unit,
+    onDismissShareSheet: () -> Unit,
+    onShareThemeSelected: (ShareCardTheme) -> Unit,
+    onToggleShowRupiah: (Boolean) -> Unit,
+    onShareDestination: (CalculationResult, ShareCardTheme, Boolean, ShareDestination, (Boolean) -> Unit) -> Unit
 ) {
     val neo = LocalNeoBrutalistColors.current
     val scrollState = rememberScrollState()
@@ -130,80 +151,142 @@ fun CalculatorScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val copiedMessage = stringResource(R.string.snackbar_copied)
+    val savedGalleryMessage = stringResource(R.string.snackbar_saved_gallery)
+    val saveFailedMessage = stringResource(R.string.snackbar_save_failed)
 
     var resultOffsetY by remember { mutableIntStateOf(0) }
+    var showSplash by remember { mutableStateOf(true) }
 
-    LaunchedEffect(uiState.scrollToResultTrigger) {
-        if (uiState.scrollToResultTrigger > 0) {
+    LaunchedEffect(Unit) {
+        delay(950)
+        showSplash = false
+    }
+
+    LaunchedEffect(uiState.isCalculating, uiState.scrollToResultTrigger) {
+        if (uiState.isCalculating || uiState.scrollToResultTrigger > 0) {
             delay(140)
             val target = if (resultOffsetY > 0) resultOffsetY else scrollState.maxValue
             scrollState.animateScrollTo(target)
         }
     }
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .padding(16.dp)
-            ) { data ->
-                Snackbar(
-                    containerColor = neo.ink,
-                    contentColor = neo.card,
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
-                ) {
-                    Text(
-                        text = data.visuals.message,
-                        fontFamily = SpaceGroteskFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp
-                    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(16.dp)
+                ) { data ->
+                    Snackbar(
+                        containerColor = neo.ink,
+                        contentColor = neo.card,
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+                    ) {
+                        Text(
+                            text = data.visuals.message,
+                            fontFamily = SpaceGroteskFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
+                    }
                 }
             }
-        }
-    ) { innerPadding ->
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxSize()
-                .dottedCanvasBackground(
-                    backgroundColor = neo.canvas,
-                    dotColor = neo.ink
-                )
-                .padding(innerPadding)
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .imePadding()
-        ) {
-            val isWideScreen = maxWidth >= 840.dp
-
-            Column(
+        ) { innerPadding ->
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 16.dp, vertical = 18.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .dottedCanvasBackground(
+                        backgroundColor = neo.canvas,
+                        dotColor = neo.ink
+                    )
+                    .padding(innerPadding)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .imePadding()
             ) {
+                val isWideScreen = maxWidth >= 840.dp
+
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .widthIn(max = if (isWideScreen) 1080.dp else 600.dp),
-                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(horizontal = 16.dp, vertical = 18.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    NeoHeaderCard()
-                    RegulatorBadgesRow()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .widthIn(max = if (isWideScreen) 1080.dp else 600.dp),
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        NeoHeaderCard()
+                        RegulatorBadgesRow()
 
-                    if (isWideScreen && uiState.result != null) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(20.dp),
-                            verticalAlignment = Alignment.Top
-                        ) {
+                        if (isWideScreen && (uiState.result != null || uiState.isCalculating)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                ParameterFormCard(
+                                    uiState = uiState,
+                                    onStockSymbolChanged = onStockSymbolChanged,
+                                    onQuickTickerSelected = onQuickTickerSelected,
+                                    onMarketSelected = onMarketSelected,
+                                    onOpenBrokerSheet = onOpenBrokerSheet,
+                                    onBuyPriceChanged = onBuyPriceChanged,
+                                    onSellPriceChanged = onSellPriceChanged,
+                                    onVolumeChanged = onVolumeChanged,
+                                    onBuyFeeChanged = onBuyFeeChanged,
+                                    onSellFeeChanged = onSellFeeChanged,
+                                    onIncludeStampChanged = onIncludeStampChanged,
+                                    onCalculateClicked = {
+                                        focusManager.clearFocus()
+                                        onCalculateClicked()
+                                    },
+                                    onExampleBbcaClicked = {
+                                        focusManager.clearFocus()
+                                        onExampleBbcaClicked()
+                                    },
+                                    onResetClicked = {
+                                        focusManager.clearFocus()
+                                        onResetClicked()
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                                ) {
+                                    if (uiState.isCalculating) {
+                                        CalculatingLoadingCard()
+                                    } else {
+                                        val res = uiState.result
+                                        if (res != null) {
+                                            NetRdnResultCard(
+                                                result = res,
+                                                onCopySummary = {
+                                                    onCopySummary(res)
+                                                    coroutineScope.launch {
+                                                        snackbarHostState.showSnackbar(copiedMessage)
+                                                    }
+                                                },
+                                                onShareSummary = onOpenShareSheet
+                                            )
+                                            TradeConfirmationCard(result = res)
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
                             ParameterFormCard(
                                 uiState = uiState,
+                                onStockSymbolChanged = onStockSymbolChanged,
+                                onQuickTickerSelected = onQuickTickerSelected,
                                 onMarketSelected = onMarketSelected,
                                 onOpenBrokerSheet = onOpenBrokerSheet,
                                 onBuyPriceChanged = onBuyPriceChanged,
@@ -223,93 +306,69 @@ fun CalculatorScreen(
                                 onResetClicked = {
                                     focusManager.clearFocus()
                                     onResetClicked()
-                                },
-                                modifier = Modifier.weight(1f)
-                            )
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(18.dp)
-                            ) {
-                                val res = uiState.result
-                                NetRdnResultCard(
-                                    result = res,
-                                    onCopySummary = {
-                                        onCopySummary(res)
-                                        coroutineScope.launch {
-                                            snackbarHostState.showSnackbar(copiedMessage)
-                                        }
-                                    },
-                                    onShareSummary = { onShareSummary(res) }
-                                )
-                                TradeConfirmationCard(result = res)
-                            }
-                        }
-                    } else {
-                        ParameterFormCard(
-                            uiState = uiState,
-                            onMarketSelected = onMarketSelected,
-                            onOpenBrokerSheet = onOpenBrokerSheet,
-                            onBuyPriceChanged = onBuyPriceChanged,
-                            onSellPriceChanged = onSellPriceChanged,
-                            onVolumeChanged = onVolumeChanged,
-                            onBuyFeeChanged = onBuyFeeChanged,
-                            onSellFeeChanged = onSellFeeChanged,
-                            onIncludeStampChanged = onIncludeStampChanged,
-                            onCalculateClicked = {
-                                focusManager.clearFocus()
-                                onCalculateClicked()
-                            },
-                            onExampleBbcaClicked = {
-                                focusManager.clearFocus()
-                                onExampleBbcaClicked()
-                            },
-                            onResetClicked = {
-                                focusManager.clearFocus()
-                                onResetClicked()
-                            }
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .onGloballyPositioned { coords ->
-                                    resultOffsetY = coords.positionInParent().y.toInt()
                                 }
-                        ) {
-                            androidx.compose.animation.AnimatedVisibility(
-                                visible = uiState.result != null,
-                                enter = fadeIn(spring(stiffness = Spring.StiffnessMediumLow)) +
-                                    expandVertically(spring(stiffness = Spring.StiffnessMediumLow)),
-                                exit = fadeOut() + shrinkVertically()
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onGloballyPositioned { coords ->
+                                        resultOffsetY = coords.positionInParent().y.toInt()
+                                    }
                             ) {
-                                val res = uiState.result
-                                if (res != null) {
-                                    Column(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                                ) {
+                                    androidx.compose.animation.AnimatedVisibility(
+                                        visible = uiState.isCalculating,
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically()
                                     ) {
-                                        NetRdnResultCard(
-                                            result = res,
-                                            onCopySummary = {
-                                                onCopySummary(res)
-                                                coroutineScope.launch {
-                                                    snackbarHostState.showSnackbar(copiedMessage)
-                                                }
-                                            },
-                                            onShareSummary = { onShareSummary(res) }
-                                        )
-                                        TradeConfirmationCard(result = res)
+                                        CalculatingLoadingCard()
+                                    }
+
+                                    androidx.compose.animation.AnimatedVisibility(
+                                        visible = !uiState.isCalculating && uiState.result != null,
+                                        enter = fadeIn(spring(stiffness = Spring.StiffnessMediumLow)) +
+                                            expandVertically(spring(stiffness = Spring.StiffnessMediumLow)),
+                                        exit = fadeOut() + shrinkVertically()
+                                    ) {
+                                        val res = uiState.result
+                                        if (res != null) {
+                                            Column(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalArrangement = Arrangement.spacedBy(18.dp)
+                                            ) {
+                                                NetRdnResultCard(
+                                                    result = res,
+                                                    onCopySummary = {
+                                                        onCopySummary(res)
+                                                        coroutineScope.launch {
+                                                            snackbarHostState.showSnackbar(copiedMessage)
+                                                        }
+                                                    },
+                                                    onShareSummary = onOpenShareSheet
+                                                )
+                                                TradeConfirmationCard(result = res)
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    TransparencyNoteBox()
-                    Spacer(modifier = Modifier.height(20.dp))
+                        TransparencyNoteBox()
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
                 }
             }
         }
+
+        SplashLoadingOverlay(
+            visible = showSplash,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 
     if (uiState.isBrokerSheetOpen) {
@@ -320,6 +379,35 @@ fun CalculatorScreen(
             onSearchQueryChange = onBrokerSearchQueryChanged,
             onBrokerSelected = onBrokerSelected,
             onDismiss = onDismissBrokerSheet
+        )
+    }
+
+    val activeResult = uiState.result
+    if (uiState.isShareSheetOpen && activeResult != null) {
+        FlexingShareSheet(
+            result = activeResult,
+            selectedTheme = uiState.selectedShareTheme,
+            showRupiah = uiState.showRupiahOnCard,
+            onThemeSelected = onShareThemeSelected,
+            onToggleShowRupiah = onToggleShowRupiah,
+            onShareDestination = { destination ->
+                onShareDestination(
+                    activeResult,
+                    uiState.selectedShareTheme,
+                    uiState.showRupiahOnCard,
+                    destination
+                ) { savedOk ->
+                    if (destination == ShareDestination.SAVE_GALLERY) {
+                        onDismissShareSheet()
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(
+                                if (savedOk) savedGalleryMessage else saveFailedMessage
+                            )
+                        }
+                    }
+                }
+            },
+            onDismiss = onDismissShareSheet
         )
     }
 }
@@ -466,6 +554,8 @@ private fun RegulatorBadge(
 @Composable
 private fun ParameterFormCard(
     uiState: CalculatorUiState,
+    onStockSymbolChanged: (String) -> Unit,
+    onQuickTickerSelected: (String) -> Unit,
     onMarketSelected: (MarketType) -> Unit,
     onOpenBrokerSheet: () -> Unit,
     onBuyPriceChanged: (String) -> Unit,
@@ -549,6 +639,14 @@ private fun ParameterFormCard(
         Spacer(modifier = Modifier.height(14.dp))
         NeoSectionTag(text = stringResource(R.string.section_price_volume))
         Spacer(modifier = Modifier.height(10.dp))
+
+        StockSymbolInputSection(
+            value = uiState.stockSymbolText,
+            onValueChange = onStockSymbolChanged,
+            onQuickTickerSelected = onQuickTickerSelected
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -986,5 +1084,133 @@ private fun TransparencyNoteBox() {
             lineHeight = 18.sp,
             color = neo.ink
         )
+    }
+}
+
+private val QUICK_BEI_TICKERS = listOf("BBCA", "BBRI", "BMRI", "TLKM", "ANTM", "BREN")
+
+@Composable
+private fun StockSymbolInputSection(
+    value: String,
+    onValueChange: (String) -> Unit,
+    onQuickTickerSelected: (String) -> Unit
+) {
+    val neo = LocalNeoBrutalistColors.current
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val fieldBg = if (isFocused) neo.noteYellow else neo.card
+    val shadowDp = if (isFocused) 4.dp else 3.dp
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.label_stock_symbol).uppercase(),
+            fontFamily = SpaceGroteskFontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 11.5.sp,
+            color = neo.ink,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = shadowDp, bottom = shadowDp)
+                .drawBehind {
+                    val offsetPx = shadowDp.toPx()
+                    drawRect(
+                        color = neo.ink,
+                        topLeft = Offset(offsetPx, offsetPx),
+                        size = Size(size.width, size.height)
+                    )
+                }
+                .background(fieldBg)
+                .border(BorderStroke(3.dp, neo.ink))
+                .defaultMinSize(minHeight = 48.dp)
+                .padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (value.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.placeholder_stock_symbol),
+                        fontFamily = SpaceGroteskFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 13.sp,
+                        color = neo.mutedInk,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    singleLine = true,
+                    interactionSource = interactionSource,
+                    cursorBrush = SolidColor(neo.ink),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Characters,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    textStyle = TextStyle(
+                        fontFamily = SpaceMonoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = neo.ink
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("stock_symbol_input")
+                )
+            }
+            if (value.isNotEmpty()) {
+                IconButton(
+                    onClick = { onValueChange("") },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .testTag("clear_stock_symbol_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = stringResource(R.string.cd_clear_stock),
+                        tint = neo.ink,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            QUICK_BEI_TICKERS.forEach { ticker ->
+                val isSelected = value.equals(ticker, ignoreCase = true)
+                Box(
+                    modifier = Modifier
+                        .defaultMinSize(minWidth = 56.dp, minHeight = 48.dp)
+                        .background(if (isSelected) neo.yellow else neo.card)
+                        .border(BorderStroke(2.dp, neo.ink))
+                        .testTag("quick_ticker_${ticker.lowercase()}")
+                        .clickable { onQuickTickerSelected(ticker) }
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = ticker,
+                        fontFamily = SpaceMonoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 11.5.sp,
+                        color = neo.ink
+                    )
+                }
+            }
+        }
     }
 }

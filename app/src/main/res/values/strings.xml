@@ -7,7 +7,7 @@
     <string name="header_title_highlight">FEE SAHAM</string>
     <string name="header_subtitle">Perhitungan presisi Trade Confirmation bursa: memecah otomatis komisi broker, Levy BEI/KSEI, kliring KPEI, PPN, PPh Final 0.1%, &amp; e-Meterai.</string>
 
-    <string name="badge_brokers_val">38 AB</string>
+    <string name="badge_brokers_val">38</string>
     <string name="badge_brokers_lbl">Broker Aktif OJK</string>
     <string name="badge_levy_val">0.0433%</string>
     <string name="badge_levy_lbl">Levy BEI+KPEI+KSEI</string>
@@ -18,7 +18,9 @@
     <string name="card_title_parameters">1. Parameter Transaksi</string>
     <string name="section_market_type">Jenis Pasar / Transaksi BEI</string>
     <string name="label_select_market">Pilih Jenis Transaksi</string>
-    <string name="section_price_volume">Detail Harga &amp; Volume</string>
+    <string name="section_price_volume">Detail Saham, Harga &amp; Volume</string>
+    <string name="label_stock_symbol">Kode / Nama Saham (Opsional)</string>
+    <string name="placeholder_stock_symbol">Contoh: BBCA, BBRI, TLKM, IRSX</string>
     <string name="label_buy_price">Harga Beli (IDR)</string>
     <string name="label_sell_price">Harga Jual (IDR)</string>
     <string name="label_total_shares">Total Lembar Saham</string>
@@ -34,8 +36,13 @@
     <string name="btn_example_bbca">Contoh: BBCA 10 Lot</string>
     <string name="btn_reset_form">Reset Form</string>
 
+    <!-- Loading Animations -->
+    <string name="loading_splash_subtitle">OJK • BEI • KPEI • KSEI • V2.0</string>
+    <string name="loading_calculating_title">Menghitung Trade Confirmation…</string>
+    <string name="loading_calculating_subtitle">Memecah komisi broker, Levy BEI/KPEI/KSEI, PPN &amp; PPh Final</string>
+
     <!-- Broker Picker Sheet -->
-    <string name="broker_sheet_title">Pilih Sekuritas (38 AB OJK)</string>
+    <string name="broker_sheet_title">Pilih Sekuritas (38 Broker OJK)</string>
     <string name="broker_search_placeholder">Cari nama broker, kode AB (XL, YP), atau aplikasi…</string>
     <string name="broker_default_badge">DEFAULT</string>
     <string name="broker_promo_badge">PROMO</string>
@@ -48,16 +55,19 @@
     <string name="cd_select_broker">Buka daftar pencarian broker</string>
     <string name="cd_select_market">Pilih jenis pasar BEI</string>
     <string name="cd_warning_icon">Peringatan parameter berubah</string>
+    <string name="cd_clear_stock">Hapus nama saham</string>
 
     <!-- Section 2: Result Net RDN -->
     <string name="card_title_result">2. Hasil Net RDN</string>
     <string name="label_net_profit_loss">Profit / Loss Bersih (Net Masuk RDN)</string>
+    <string name="label_stock_profit_badge">SAHAM %1$s</string>
     <string name="label_gross_profit">Profit Kotor (Gross)</string>
     <string name="label_total_deduction">Total Potongan</string>
 
     <!-- Section 3: Trade Confirmation Breakdown -->
     <string name="card_title_breakdown">3. Rincian Trade Confirmation</string>
     <string name="group_tx_value">Nilai Transaksi</string>
+    <string name="row_stock_name">Saham / Emiten</string>
     <string name="row_buy_value">Total Nilai Beli Bruto</string>
     <string name="row_sell_value">Total Nilai Jual Bruto</string>
 
@@ -77,11 +87,22 @@
     <string name="row_bep_price">Harga Breakeven (BEP) / Lembar</string>
     <string name="row_total_cost">Total Semua Biaya &amp; Pajak</string>
 
-    <!-- Copy & Share Actions -->
+    <!-- Copy & Flexing Share Studio -->
     <string name="btn_copy_summary">Salin Ringkasan</string>
-    <string name="btn_share_summary">Bagikan</string>
+    <string name="btn_share_summary">Bagikan Kartu</string>
     <string name="snackbar_copied">Ringkasan Trade Confirmation disalin ke clipboard</string>
-    <string name="share_chooser_title">Bagikan Trade Confirmation</string>
+    <string name="snackbar_saved_gallery">Kartu berhasil disimpan ke Galeri (Pictures/FeeSahamBEI)</string>
+    <string name="snackbar_save_failed">Gagal menyimpan kartu gambar</string>
+    <string name="share_chooser_title">Bagikan Kartu Profit Saham</string>
+    <string name="flexing_sheet_title">Portfolio Flexing</string>
+    <string name="flexing_toggle_nominal">Tampilkan Nominal Rp</string>
+    <string name="flexing_share_to">Bagikan ke</string>
+    <string name="flexing_action_save">Simpan</string>
+    <string name="flexing_action_story">Story</string>
+    <string name="flexing_action_whatsapp">WhatsApp</string>
+    <string name="flexing_action_facebook">Facebook</string>
+    <string name="flexing_action_more">Lainnya</string>
+    <string name="cd_close_flexing">Tutup tampilan bagikan kartu</string>
 
     <!-- Transparency Note -->
     <string name="note_transparency_title">Transparansi Perhitungan:</string>

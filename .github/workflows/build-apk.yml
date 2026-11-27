@@ -62,12 +62,18 @@ jobs:
         with:
           gradle-version: '9.3.1'
 
-      - name: Create temporary debug keystore
+      - name: Prepare consistent debug keystore
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f "./debug.keystore" ]; then
-            echo "Temporary ./debug.keystore already exists; skipping generation."
+          if [ -f "./debug.keystore" ] && [ -s "./debug.keystore" ]; then
+            echo "Existing ./debug.keystore found; using it for consistent update signing."
+          elif [ -f "./debug.keystore.base64" ] && [ -s "./debug.keystore.base64" ]; then
+            base64 -d ./debug.keystore.base64 > ./debug.keystore || {
+              echo "::error::Failed to decode ./debug.keystore.base64."
+              exit 1
+            }
+            echo "Decoded persistent ./debug.keystore from ./debug.keystore.base64 for seamless in-place updates."
           else
             KEYTOOL_BIN="${JAVA_HOME}/bin/keytool"
             if [ ! -x "$KEYTOOL_BIN" ]; then
@@ -90,11 +96,11 @@ jobs:
           fi
 
           if [ ! -f "./debug.keystore" ] || [ ! -s "./debug.keystore" ]; then
-            echo "::error::Temporary ./debug.keystore does not exist or is empty."
+            echo "::error::./debug.keystore does not exist or is empty."
             exit 1
           fi
 
-          echo "Confirmed ./debug.keystore is present for the debug build."
+          echo "Confirmed ./debug.keystore is ready for the debug build."
 
       - name: Build debug APK
         shell: bash
@@ -253,7 +259,7 @@ jobs:
             echo "- **Commit SHA:** \`${GITHUB_SHA}\`"
             echo "- **File APK:** \`${ASSET_NAME}\`"
             echo ""
-            echo "> **Catatan:** Ini adalah debug APK yang dibangun otomatis oleh GitHub Actions dengan debug keystore sementara untuk keperluan pengujian (bukan rilis produksi Play Store)."
+            echo "> **Catatan:** Ini adalah debug APK yang dibangun otomatis oleh GitHub Actions menggunakan debug keystore proyek yang konsisten agar pembaruan versi berikutnya berjalan mulus (bukan rilis produksi Play Store)."
           } > "$NOTES_FILE"
 
           gh release create "$RELEASE_TAG" "$ASSET_PATH" \

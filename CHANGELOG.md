@@ -2,6 +2,17 @@
 
 Seluruh perubahan, revisi tarif sekuritas, dan pembaruan fitur dicatat di file ini dan digunakan otomatis untuk Release Notes pada GitHub Releases.
 
+## [V2.0]
+
+### Perbaikan
+- **Perbaikan Konflik Update APK**: Menyatukan *signing keystore* build GitHub Actions menggunakan `debug.keystore.base64` yang konsisten dan menambahkan pemulihan otomatis (*corruption handler*) pada DataStore preferensi agar pembaruan aplikasi versi selanjutnya berjalan mulus tanpa gagal pasang atau bentrok data.
+- **Tampilan Badge Broker**: Mengubah label statistik jumlah sekuritas dari `38 AB` menjadi `38` agar lebih bersih dan ringkas.
+
+### Pembaruan Fitur
+- **Input Kode / Nama Saham**: Menambahkan kolom opsional *Kode / Nama Saham* beserta pilihan cepat ticker populer BEI (`BBCA`, `BBRI`, `BMRI`, `TLKM`, `ANTM`, `BREN`). Nama saham tampil di hasil profit/loss bersih, rincian *Trade Confirmation*, teks salinan, dan kartu bagikan.
+- **Animasi Loading Candlestick Saham**: Menambahkan animasi pembuka (*splash overlay*) dan animasi saat menghitung hasil (*calculating card*) dengan grafik *candlestick* naik bergaya Neo-Brutalist.
+- **Portfolio Flexing Share Studio**: Mengubah tombol **Bagikan Kartu** menjadi modal interaktif bergaya *Portfolio Flexing* dengan pratinjau langsung, 6 tema visual kartu (3D Candlestick Dark, Neon Arrow, Emerald Light, Neo-Brutalist, Midnight Gold, Cyber Terminal), tombol tampil/sembunyikan nominal Rupiah, serta pintasan **Simpan ke Galeri**, **Instagram Story**, **WhatsApp**, **Facebook**, dan **Lainnya**.
+
 ## [V1.0.1]
 
 ### Revisi Tarif Fee Sekuritas

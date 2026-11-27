@@ -11,12 +11,14 @@ Aplikasi Android native (**Fee Saham BEI**) untuk simulasi dan verifikasi biaya 
 - **38 Sekuritas Anggota Bursa OJK + Ikon Asli & Pencarian Cepat**: Dilengkapi ikon resmi masing-masing sekuritas (dimuat dari domain resmi dengan *disk cache* dan fallback emblem saat offline), pencarian instan berdasarkan nama/kode AB/nama aplikasi (`XL`, `YP`, `MOST`, `BIONS`, dll.), penyimpanan broker default otomatis offline, serta 2 mode tarif *Custom* (*All-In* & *Base Fee*).
 - **Simulasi *Break-Even Point* (BEP) & Minimum Fee**: Menghitung harga jual minimal impas per lembar dan otomatis menerapkan aturan *minimum fee* harian untuk sekuritas tertentu (seperti Mandiri Sekuritas `Rp 5.000/hari`).
 - **Estimasi *e-Meterai* (PMK 134/2021)**: Opsi perhitungan bea meterai `Rp 10.000` untuk nilai transaksi di atas `Rp 10.000.000` (termasuk aturan akumulasi harian untuk *Day Trade*).
-- **Salin & Bagikan Trade Confirmation**: Satu ketukan untuk menyalin rincian perhitungan ke clipboard atau membagikannya langsung melalui *Android Share Sheet*.
+- **Input Kode / Nama Saham & Pilihan Cepat**: Pengguna dapat memasukkan kode/nama emiten (misalnya `BBCA`, `BBRI`, `IRSX`) atau memilih ticker cepat sehingga hasil keuntungan/kerugian jelas terikat pada saham yang dihitung.
+- **Animasi Loading Candlestick Interaktif**: Dilengkapi animasi pembuka (*splash overlay*) dan animasi kalkulasi grafik *candlestick* naik yang mulus dan selaras dengan tema Neo-Brutalist.
+- **Portfolio Flexing Share Studio & Salin Ringkasan**: Satu ketukan untuk menyalin rincian *Trade Confirmation* ke clipboard atau membuka *Portfolio Flexing* dengan 6 tema kartu HD (`1080×1350`), opsi sembunyikan/tampilkan nominal Rupiah, serta tombol **Simpan ke Galeri**, **Instagram Story**, **WhatsApp**, **Facebook**, dan **Lainnya**.
 - **Desain Neo-Brutalist Responsif & 100% Offline**: Antarmuka tegas berlatar krem bertitik dengan tipografi lokal *Space Grotesk* dan *Space Mono*, mendukung layar ponsel maupun tablet tanpa memerlukan koneksi internet.
 
 ---
 
-## Daftar Sekuritas & Tarif Fee Terbaru (V1.0.1)
+## Daftar Sekuritas & Tarif Fee Terbaru (V2.0)
 
 | Kategori | Sekuritas (Kode AB) | Fee Beli | Fee Jual |
 | :--- | :--- | :---: | :---: |
@@ -72,8 +74,8 @@ Aplikasi Android native (**Fee Saham BEI**) untuk simulasi dan verifikasi biaya 
 
 ### A. Unduh APK Langsung (Disarankan untuk Pengguna HP)
 1. Buka halaman **Releases** pada repositori GitHub ini.
-2. Pilih rilis terbaru (**`Kalkulator Fee Saham BEI (V1.0.1)`**).
-3. Unduh file `.apk` pada bagian **Assets** dan pasang di perangkat Android Anda.
+2. Pilih rilis terbaru (**`Kalkulator Fee Saham BEI (V2.0)`**).
+3. Unduh file `.apk` pada bagian **Assets** dan pasang di perangkat Android Anda. *(Catatan: jika sebelumnya pernah memasang versi `V1.0.0`/`V1.0.1` dengan keystore sementara lama, hapus instalasi lama satu kali sebelum memasang `V2.0`; seluruh pembaruan berikutnya akan berjalan mulus tanpa hapus data.)*
 
 ### B. Build dari Source Code (Untuk Pengembang)
 1. **Clone repositori ini:**
@@ -106,33 +108,38 @@ Fee-Saham-BEI/
 │   └── workflows/
 │       └── build-apk.yml                # CI/CD otomatis build Debug APK & GitHub Release
 ├── app/
-│   ├── build.gradle.kts                 # Konfigurasi modul Android, versi V1.0.1 & dependensi
+│   ├── build.gradle.kts                 # Konfigurasi modul Android, versi V2.0 & dependensi
 │   └── src/
 │       ├── main/
 │       │   ├── java/com/example/
-│       │   │   ├── MainActivity.kt                      # Entry point, Clipboard & Share Sheet
+│       │   │   ├── MainActivity.kt                      # Entry point, Clipboard, Galeri & Share Kartu HD
 │       │   │   ├── data/
-│       │   │   │   └── BrokerPreferencesRepository.kt   # DataStore broker default offline
+│       │   │   │   └── BrokerPreferencesRepository.kt   # DataStore broker default + corruption recovery
 │       │   │   ├── domain/
 │       │   │   │   ├── BrokerCatalog.kt                 # Katalog 38 AB OJK + 2 mode Custom
 │       │   │   │   ├── MarketModels.kt                  # Model pasar BEI & tarif regulator
 │       │   │   │   └── StockFeeCalculator.kt            # Mesin kalkulasi presisi & formatter
 │       │   │   ├── presentation/
-│       │   │   │   └── CalculatorViewModel.kt           # StateFlow & logika interaksi UI
+│       │   │   │   └── CalculatorViewModel.kt           # StateFlow, kode saham, loading & share state
 │       │   │   └── ui/
 │       │   │       ├── CalculatorScreen.kt              # Layar utama Neo-Brutalist adaptif
 │       │   │       ├── components/
 │       │   │       │   ├── BrokerLogo.kt                # Pemuat ikon resmi sekuritas (Coil + fallback)
 │       │   │       │   ├── BrokerPickerSheet.kt         # Modal pencarian cepat 38 broker
+│       │   │       │   ├── FlexingShareSheet.kt         # Modal Portfolio Flexing (6 tema & 5 tombol bagikan)
 │       │   │       │   ├── NeoBrutalistPrimitives.kt    # Komponen kartu, tombol & input
-│       │   │       │   └── ResultSections.kt            # Kartu Net RDN & Trade Confirmation
+│       │   │       │   ├── ResultSections.kt            # Kartu Net RDN & Trade Confirmation
+│       │   │       │   ├── ShareCardModels.kt           # Model tema & tujuan bagikan kartu
+│       │   │       │   ├── ShareCardRenderer.kt         # Renderer Canvas HD 1080×1350, MediaStore & FileProvider
+│       │   │       │   └── StockLoadingAnimation.kt     # Animasi Candlestick Splash & Calculating
 │       │   │       └── theme/                           # Color, Typography & Neo-Brutalist Theme
 │       │   └── res/
 │       │       ├── font/                                # Space Grotesk & Space Mono (.ttf lokal)
 │       │       ├── drawable/ & mipmap-*/                # Ikon launcher adaptif kustom
+│       │       ├── xml/file_paths.xml                   # FileProvider cache path untuk share gambar
 │       │       └── values/strings.xml                   # Resource teks Bahasa Indonesia
 │       └── test/java/com/example/
-│           └── StockFeeCalculatorTest.kt                # Unit test rumus regulator & broker
+│           └── StockFeeCalculatorTest.kt                # Unit test rumus regulator, broker & kode saham
 ├── gradle/libs.versions.toml            # Version catalog (AGP 9.1.1)
 ├── CHANGELOG.md                         # Catatan perubahan tiap versi (sumber Release Notes)
 └── README.md                            # Dokumentasi utama project
@@ -165,6 +172,13 @@ Misalkan Anda membeli saham **BBCA** pada **Pasar Reguler (RG)** dengan rincian 
 ---
 
 ## Riwayat Pembaruan (Changelog)
+
+### `V2.0`
+- **Perbaikan Konflik Update APK**: Menggunakan *keystore* konsisten (`debug.keystore.base64`) pada build GitHub Actions serta menambahkan `ReplaceFileCorruptionHandler` pada DataStore agar pembaruan APK ke versi berikutnya berjalan mulus tanpa gagal pasang atau bentrok data.
+- **Penyederhanaan Badge Jumlah Broker**: Mengubah tampilan `38 AB` menjadi `38`.
+- **Fitur Input Kode / Nama Saham**: Menambahkan kolom nama/kode saham + pilihan cepat ticker BEI yang tampil otomatis di hasil Net RDN, rincian Trade Confirmation, teks salin, dan kartu bagikan.
+- **Animasi Loading Candlestick**: Menambahkan *splash loading overlay* dan kartu animasi menghitung dengan grafik *candlestick* naik.
+- **Portfolio Flexing Share Studio**: Modal bagikan kartu bergaya *Portfolio Flexing* dengan 6 tema visual HD (`1080×1350`), toggle nominal Rupiah, serta tombol **Simpan**, **Story**, **WhatsApp**, **Facebook**, dan **Lainnya**.
 
 ### `V1.0.1`
 - **Revisi Tarif Broker**:
