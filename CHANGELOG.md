@@ -5,16 +5,16 @@ Seluruh perubahan, revisi tarif sekuritas, dan pembaruan fitur dicatat di file i
 ## [V2.1]
 
 ### Revisi Tampilan & Branding
-- **Loading Screen & Versi**: Mengubah teks pembuka loading screen menjadi `CREDIT BY LIWIRYA` diikuti baris baru `VERSION: 2.1`, serta menaikkan versi build menjadi `2.1` (`versionCode = 4`).
-- **Header & Subjudul Utama**: Mengubah tag atas menjadi `CREATED BY LIWIRYA` dan menyederhanakan subjudul menjadi `Perhitungan Trade Fee`.
+- **Loading Screen & Transisi Pembuka**: Layar loading penuh tertutup (*opaque*) menggunakan logo aplikasi terbaru dengan cincin animasi berputar dan progres `0%–100%` (jeda transisi halus sebelum masuk ke halaman utama), menampilkan teks `CREDIT BY LIWIRYA` / `VERSION: 2.1`, serta pembaruan versi build menjadi `2.1` (`versionCode = 4`).
+- **Tata Letak Header Rapi**: Merapikan kartu header utama menjadi tata letak 2 kolom ringkas tanpa ruang kosong berlebih dengan tag `CREATED BY LIWIRYA`, subjudul `Perhitungan Trade Fee`, dan tombol musik di kanan.
 - **Watermark Kartu Bagikan**: Mengubah subjudul watermark di bawah `Fee Saham BEI` pada kartu bagikan *Portfolio Flexing* menjadi `CREDIT BY LIWIRYA`.
-- **Ikon Aplikasi Baru**: Memperbarui *adaptive launcher icon* (dan seluruh resolusi `mipmap-*`) dengan desain perisai emas & candlestick neon bergaya modern.
+- **Ikon Aplikasi Baru**: Memperbarui *adaptive launcher icon* (dan seluruh resolusi `mipmap-*`) menggunakan logo kustom terbaru.
 - **Logo Sucor Sekuritas (AZ)**: Mengganti ikon Sucor Sekuritas menggunakan logo resmi **SPOT** terbaru yang dibundel langsung di dalam aplikasi.
 
 ### Pembaruan Fitur
 - **Background Video Looping Tanpa Suara**: Menambahkan latar belakang video dinamis penuh layar yang otomatis berputar terus-menerus dalam kondisi bisu (*muted*) dengan pemutaran mengikuti siklus hidup layar.
 - **Pemutar Musik MP3 Persisten (Pojok Kanan Atas)**: Menambahkan tombol ikon musik di pojok kanan atas untuk mengimpor lagu MP3 dari perangkat (tanpa izin penyimpanan luas), menyimpan lagu secara permanen di penyimpanan internal aplikasi, lengkap dengan kontrol *Play/Pause*, *Previous/Next*, *Seekbar*, mode pengulangan (*Off / Semua / 1 Lagu*), dan hapus lagu. Musik tetap berjalan saat aplikasi diminimalkan (*close sementara*) dan otomatis berhenti saat aplikasi ditutup penuh dari *Recents / Close All*.
-- **Footer Sosial & Kredit**: Menambahkan tautan ikon **Instagram** (`@mynameisliwirya`), ikon **GitHub** (`liwirya`), serta teks `CREDIT BY LIWIRYA - THANKS FOR USED` di bagian bawah kartu *Transparansi Perhitungan*.
+- **Footer Sosial & Kredit Terpisah**: Menambahkan tautan ikon **Instagram** (`@mynameisliwirya`), ikon **GitHub** (`liwirya`), serta teks `CREDIT BY LIWIRYA - THANKS FOR USED` secara terpisah di luar frame kartu *Transparansi Perhitungan*.
 
 ## [V2.0]
 

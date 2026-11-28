@@ -183,11 +183,11 @@ Misalkan Anda membeli saham **BBCA** pada **Pasar Reguler (RG)** dengan rincian 
 ## Riwayat Pembaruan (Changelog)
 
 ### `V2.1`
-- **Revisi Branding & Versi**: Loading screen menampilkan `CREDIT BY LIWIRYA` / `VERSION: 2.1`, tag header utama menjadi `CREATED BY LIWIRYA`, subjudul menjadi `Perhitungan Trade Fee`, serta watermark kartu bagikan menjadi `CREDIT BY LIWIRYA`.
-- **Ikon Aplikasi & Logo Sucor Sekuritas Baru**: Pembaruan ikon launcher adaptif modern serta penggantian ikon **Sucor Sekuritas (AZ)** menggunakan logo resmi **SPOT**.
+- **Revisi Branding, Header & Transisi Loading**: Loading screen penuh tertutup menggunakan logo aplikasi kustom dengan animasi cincin berputar & progres `0%–100%` (jeda transisi halus sebelum masuk ke halaman utama), teks `CREDIT BY LIWIRYA` / `VERSION: 2.1`, tata letak header 2 kolom ringkas (`CREATED BY LIWIRYA` & `Perhitungan Trade Fee`), serta watermark kartu bagikan `CREDIT BY LIWIRYA`.
+- **Ikon Aplikasi & Logo Sucor Sekuritas Baru**: Pembaruan ikon launcher adaptif menggunakan logo kustom terbaru serta penggantian ikon **Sucor Sekuritas (AZ)** menggunakan logo resmi **SPOT**.
 - **Background Video Looping Tanpa Suara**: Penambahan latar belakang video penuh layar yang otomatis berjalan terus-menerus dalam kondisi bisu (*muted*).
 - **Pemutar Musik MP3 Persisten**: Tombol musik di pojok kanan atas untuk menambahkan & menyimpan file MP3 lokal, kontrol *play/pause*, *next/prev*, *repeat*, *seekbar*, tetap menyala saat aplikasi diminimalkan, dan otomatis berhenti saat aplikasi ditutup penuh (*Close All*).
-- **Footer Sosial & Kredit**: Penambahan ikon Instagram (`mynameisliwirya`), ikon GitHub (`liwirya`), dan teks `CREDIT BY LIWIRYA - THANKS FOR USED` di bawah kartu *Transparansi Perhitungan*.
+- **Footer Sosial & Kredit Terpisah**: Penambahan ikon Instagram (`mynameisliwirya`), ikon GitHub (`liwirya`), dan teks `CREDIT BY LIWIRYA - THANKS FOR USED` secara terpisah di bawah frame kartu *Transparansi Perhitungan*.
 
 ### `V2.0`
 - **Perbaikan Konflik Update APK**: Menggunakan *keystore* konsisten (`debug.keystore.base64`) pada build GitHub Actions serta menambahkan `ReplaceFileCorruptionHandler` pada DataStore agar pembaruan APK ke versi berikutnya berjalan mulus tanpa gagal pasang atau bentrok data.

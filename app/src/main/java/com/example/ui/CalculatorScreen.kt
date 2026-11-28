@@ -3,9 +3,11 @@ package com.example.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -176,12 +178,7 @@ fun CalculatorScreen(
     val saveFailedMessage = stringResource(R.string.snackbar_save_failed)
 
     var resultOffsetY by remember { mutableIntStateOf(0) }
-    var showSplash by remember { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) {
-        delay(950)
-        showSplash = false
-    }
+    var isSplashFinished by remember { mutableStateOf(false) }
 
     LaunchedEffect(musicSnackbarMessage) {
         if (!musicSnackbarMessage.isNullOrBlank()) {
@@ -199,46 +196,54 @@ fun CalculatorScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Muted, continuously looping video background
-        MutedLoopingVideoBackground(
-            videoResId = R.raw.bg_video,
-            scrimAlpha = 0.20f,
+        // Main app content smoothly fades & scales in only AFTER the splash transition finishes
+        androidx.compose.animation.AnimatedVisibility(
+            visible = isSplashFinished,
+            enter = fadeIn(animationSpec = tween(durationMillis = 480)) +
+                scaleIn(initialScale = 0.97f, animationSpec = tween(durationMillis = 480)),
             modifier = Modifier.fillMaxSize()
-        )
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                // Muted, continuously looping video background
+                MutedLoopingVideoBackground(
+                    videoResId = R.raw.bg_video,
+                    scrimAlpha = 0.20f,
+                    modifier = Modifier.fillMaxSize()
+                )
 
-        Scaffold(
-            containerColor = Color.Transparent,
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            snackbarHost = {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .padding(16.dp)
-                ) { data ->
-                    Snackbar(
-                        containerColor = neo.ink,
-                        contentColor = neo.card,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
-                    ) {
-                        Text(
-                            text = data.visuals.message,
-                            fontFamily = SpaceGroteskFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp
-                        )
+                Scaffold(
+                    containerColor = Color.Transparent,
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                    snackbarHost = {
+                        SnackbarHost(
+                            hostState = snackbarHostState,
+                            modifier = Modifier
+                                .navigationBarsPadding()
+                                .padding(16.dp)
+                        ) { data ->
+                            Snackbar(
+                                containerColor = neo.ink,
+                                contentColor = neo.card,
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
+                            ) {
+                                Text(
+                                    text = data.visuals.message,
+                                    fontFamily = SpaceGroteskFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp
+                                )
+                            }
+                        }
                     }
-                }
-            }
-        ) { innerPadding ->
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .statusBarsPadding()
-                    .navigationBarsPadding()
-                    .imePadding()
-            ) {
+                ) { innerPadding ->
+                    BoxWithConstraints(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .statusBarsPadding()
+                            .navigationBarsPadding()
+                            .imePadding()
+                    ) {
                 val isWideScreen = maxWidth >= 840.dp
 
                 Column(
@@ -393,18 +398,22 @@ fun CalculatorScreen(
                             }
                         }
 
-                        TransparencyNoteBox(
+                        TransparencyNoteBox()
+                        SocialCreditsFooter(
                             onOpenInstagram = { onOpenExternalUrl(URL_INSTAGRAM_LIWIRYA) },
                             onOpenGitHub = { onOpenExternalUrl(URL_GITHUB_LIWIRYA) }
                         )
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
+                }
+            }
                 }
             }
         }
 
         SplashLoadingOverlay(
-            visible = showSplash,
+            visible = !isSplashFinished,
+            onLoadingFinished = { isSplashFinished = true },
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -475,75 +484,81 @@ private fun NeoHeaderCard(
     val neo = LocalNeoBrutalistColors.current
     NeoCard(
         backgroundColor = neo.yellow,
-        contentPadding = PaddingValues(18.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .background(neo.ink)
-                    .padding(horizontal = 10.dp, vertical = 4.dp)
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                Box(
+                    modifier = Modifier
+                        .background(neo.ink)
+                        .padding(horizontal = 9.dp, vertical = 3.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.header_tag),
+                        fontFamily = SpaceMonoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.5.sp,
+                        letterSpacing = 0.8.sp,
+                        color = neo.card
+                    )
+                }
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.header_title_prefix),
+                        fontFamily = SpaceGroteskFontFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 23.sp,
+                        lineHeight = 27.sp,
+                        letterSpacing = (-0.5).sp,
+                        color = neo.ink
+                    )
+                    Box(
+                        modifier = Modifier
+                            .rotate(-1.5f)
+                            .background(neo.green)
+                            .border(BorderStroke(2.dp, neo.ink))
+                            .padding(horizontal = 7.dp, vertical = 1.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.header_title_highlight),
+                            fontFamily = SpaceGroteskFontFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 23.sp,
+                            lineHeight = 27.sp,
+                            letterSpacing = (-0.5).sp,
+                            color = neo.ink
+                        )
+                    }
+                }
+
                 Text(
-                    text = stringResource(R.string.header_tag),
-                    fontFamily = SpaceMonoFontFamily,
+                    text = stringResource(R.string.header_subtitle),
+                    fontFamily = SpaceGroteskFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 11.sp,
-                    letterSpacing = 1.sp,
-                    color = neo.card
+                    fontSize = 13.sp,
+                    lineHeight = 17.sp,
+                    color = neo.ink
                 )
             }
+
             TopRightMusicButton(
                 isPlaying = isMusicPlaying,
                 trackCount = savedTrackCount,
                 onClick = onMusicButtonClick
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.header_title_prefix),
-                fontFamily = SpaceGroteskFontFamily,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 27.sp,
-                lineHeight = 31.sp,
-                letterSpacing = (-0.5).sp,
-                color = neo.ink
-            )
-            Box(
-                modifier = Modifier
-                    .rotate(-1.5f)
-                    .background(neo.green)
-                    .border(BorderStroke(2.dp, neo.ink))
-                    .padding(horizontal = 8.dp, vertical = 1.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.header_title_highlight),
-                    fontFamily = SpaceGroteskFontFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 27.sp,
-                    lineHeight = 31.sp,
-                    letterSpacing = (-0.5).sp,
-                    color = neo.ink
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = stringResource(R.string.header_subtitle),
-            fontFamily = SpaceGroteskFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = 13.5.sp,
-            lineHeight = 19.sp,
-            color = neo.ink
-        )
     }
 }
 
@@ -1121,10 +1136,7 @@ private fun BrokerSelectorTrigger(
 }
 
 @Composable
-private fun TransparencyNoteBox(
-    onOpenInstagram: () -> Unit,
-    onOpenGitHub: () -> Unit
-) {
+private fun TransparencyNoteBox() {
     val neo = LocalNeoBrutalistColors.current
     NeoCard(
         backgroundColor = neo.card,
@@ -1154,10 +1166,6 @@ private fun TransparencyNoteBox(
             fontSize = 12.5.sp,
             lineHeight = 18.sp,
             color = neo.ink
-        )
-        SocialCreditsFooter(
-            onOpenInstagram = onOpenInstagram,
-            onOpenGitHub = onOpenGitHub
         )
     }
 }

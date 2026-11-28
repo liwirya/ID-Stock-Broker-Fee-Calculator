@@ -136,15 +136,13 @@ fun SocialCreditsFooter(
     val ghDesc = stringResource(R.string.cd_github_link)
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 6.dp, bottom = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(14.dp))
-        NeoDashedDivider()
-        Spacer(modifier = Modifier.height(14.dp))
-
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Instagram Button
@@ -198,15 +196,23 @@ fun SocialCreditsFooter(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = stringResource(R.string.credit_footer_text),
-            fontFamily = SpaceMonoFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 11.sp,
-            letterSpacing = 0.6.sp,
-            color = neo.ink,
-            textAlign = TextAlign.Center
-        )
+        Box(
+            modifier = Modifier
+                .background(neo.ink)
+                .border(BorderStroke(2.dp, neo.yellow))
+                .padding(horizontal = 12.dp, vertical = 5.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(R.string.credit_footer_text),
+                fontFamily = SpaceMonoFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 11.sp,
+                letterSpacing = 0.6.sp,
+                color = neo.card,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
