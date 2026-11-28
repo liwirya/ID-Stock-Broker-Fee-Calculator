@@ -193,10 +193,7 @@ fun SplashLoadingOverlay(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .dottedCanvasBackground(
-                    backgroundColor = neo.canvas,
-                    dotColor = neo.ink
-                )
+                .background(Color(0xCC070B14))
                 .padding(24.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -213,14 +210,17 @@ fun SplashLoadingOverlay(
                     Box(
                         modifier = Modifier
                             .background(neo.ink)
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = stringResource(R.string.loading_splash_subtitle),
                             fontFamily = SpaceMonoFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 11.sp,
+                            lineHeight = 16.sp,
                             letterSpacing = 1.sp,
+                            textAlign = TextAlign.Center,
                             color = neo.card
                         )
                     }

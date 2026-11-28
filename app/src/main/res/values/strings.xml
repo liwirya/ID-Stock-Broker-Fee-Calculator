@@ -2,10 +2,10 @@
     <string name="app_name">Fee Saham BEI</string>
 
     <!-- Header & Badges -->
-    <string name="header_tag">OJK • BEI • KPEI • KSEI COMPLIANT</string>
+    <string name="header_tag">CREATED BY LIWIRYA</string>
     <string name="header_title_prefix">KALKULATOR</string>
     <string name="header_title_highlight">FEE SAHAM</string>
-    <string name="header_subtitle">Perhitungan presisi Trade Confirmation bursa: memecah otomatis komisi broker, Levy BEI/KSEI, kliring KPEI, PPN, PPh Final 0.1%, &amp; e-Meterai.</string>
+    <string name="header_subtitle">Perhitungan Trade Fee</string>
 
     <string name="badge_brokers_val">38</string>
     <string name="badge_brokers_lbl">Broker Aktif OJK</string>
@@ -37,7 +37,7 @@
     <string name="btn_reset_form">Reset Form</string>
 
     <!-- Loading Animations -->
-    <string name="loading_splash_subtitle">OJK • BEI • KPEI • KSEI • V2.0</string>
+    <string name="loading_splash_subtitle">CREDIT BY LIWIRYA\nVERSION: 2.1</string>
     <string name="loading_calculating_title">Menghitung Trade Confirmation…</string>
     <string name="loading_calculating_subtitle">Memecah komisi broker, Levy BEI/KPEI/KSEI, PPN &amp; PPh Final</string>
 
@@ -104,7 +104,33 @@
     <string name="flexing_action_more">Lainnya</string>
     <string name="cd_close_flexing">Tutup tampilan bagikan kartu</string>
 
-    <!-- Transparency Note -->
+    <!-- Transparency Note & Footer Credits -->
     <string name="note_transparency_title">Transparansi Perhitungan:</string>
     <string name="note_transparency_body" formatted="false">Tarif standar sekuritas ritel di Indonesia (misal 0.15% / 0.25%) bersifat All-In, artinya sudah mencakup Levy BEI+KSEI (0.03%), KPEI (0.01%), PPN Levy (0.0033%), PPN Komisi, dan PPh Final jual (0.10%). Kalkulator ini memecah komponen tersebut secara akurat tanpa menghitung ganda.</string>
+    <string name="credit_footer_text">CREDIT BY LIWIRYA - THANKS FOR USED</string>
+    <string name="cd_instagram_link">Buka Instagram mynameisliwirya</string>
+    <string name="cd_github_link">Buka GitHub liwirya</string>
+
+    <!-- Music Player -->
+    <string name="cd_music_player">Buka pemutar musik MP3</string>
+    <string name="music_sheet_title">Pemutar Musik MP3</string>
+    <string name="cd_close_music">Tutup pemutar musik</string>
+    <string name="music_add_mp3">Tambah Lagu MP3</string>
+    <string name="music_now_playing_label">SEDANG DIPUTAR</string>
+    <string name="music_idle_title">Belum ada lagu diputar</string>
+    <string name="music_empty_title">Daftar lagu masih kosong</string>
+    <string name="music_empty_subtitle">Tambahkan file MP3 dari HP Anda. Lagu otomatis tersimpan dan tetap berjalan saat aplikasi diminimalkan.</string>
+    <string name="music_saved_list_title">Lagu Tersimpan (%1$d)</string>
+    <string name="music_repeat_off">Ulang: Mati</string>
+    <string name="music_repeat_all">Ulang: Semua</string>
+    <string name="music_repeat_one">Ulang: 1 Lagu</string>
+    <string name="music_notif_channel_name">Pemutar Musik</string>
+    <string name="music_notif_channel_desc">Kontrol pemutar musik MP3 di latar belakang</string>
+    <string name="music_added_snackbar">%1$d lagu MP3 berhasil ditambahkan &amp; disimpan</string>
+    <string name="music_add_failed_snackbar">Gagal menambahkan file audio MP3</string>
+    <string name="cd_music_prev">Lagu sebelumnya</string>
+    <string name="cd_music_play_pause">Putar atau jeda lagu</string>
+    <string name="cd_music_next">Lagu berikutnya</string>
+    <string name="cd_music_repeat">Ubah mode pengulangan</string>
+    <string name="cd_music_delete">Hapus lagu dari daftar</string>
 </resources>

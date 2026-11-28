@@ -97,11 +97,14 @@ import com.example.domain.Broker
 import com.example.domain.CalculationResult
 import com.example.domain.FeeMode
 import com.example.domain.MarketType
+import com.example.music.MusicPlayerState
 import com.example.presentation.CalculatorUiState
 import com.example.ui.components.BrokerLogoEmblem
 import com.example.ui.components.BrokerPickerSheet
 import com.example.ui.components.CalculatingLoadingCard
 import com.example.ui.components.FlexingShareSheet
+import com.example.ui.components.MusicPlayerSheet
+import com.example.ui.components.MutedLoopingVideoBackground
 import com.example.ui.components.NeoButton
 import com.example.ui.components.NeoCard
 import com.example.ui.components.NeoMarketPill
@@ -110,9 +113,12 @@ import com.example.ui.components.NeoSectionTag
 import com.example.ui.components.NetRdnResultCard
 import com.example.ui.components.ShareCardTheme
 import com.example.ui.components.ShareDestination
+import com.example.ui.components.SocialCreditsFooter
 import com.example.ui.components.SplashLoadingOverlay
+import com.example.ui.components.TopRightMusicButton
 import com.example.ui.components.TradeConfirmationCard
-import com.example.ui.components.dottedCanvasBackground
+import com.example.ui.components.URL_GITHUB_LIWIRYA
+import com.example.ui.components.URL_INSTAGRAM_LIWIRYA
 import com.example.ui.theme.LocalNeoBrutalistColors
 import com.example.ui.theme.SpaceGroteskFontFamily
 import com.example.ui.theme.SpaceMonoFontFamily
@@ -122,6 +128,21 @@ import kotlinx.coroutines.launch
 @Composable
 fun CalculatorScreen(
     uiState: CalculatorUiState,
+    musicState: MusicPlayerState,
+    isMusicSheetOpen: Boolean,
+    musicSnackbarMessage: String?,
+    onMusicSnackbarConsumed: () -> Unit,
+    onOpenMusicSheet: () -> Unit,
+    onDismissMusicSheet: () -> Unit,
+    onAddMp3Clicked: () -> Unit,
+    onPlayTrackAt: (Int) -> Unit,
+    onToggleMusicPlayPause: () -> Unit,
+    onNextTrackClicked: () -> Unit,
+    onPreviousTrackClicked: () -> Unit,
+    onCycleRepeatMode: () -> Unit,
+    onSeekMusicTo: (Long) -> Unit,
+    onDeleteTrack: (String) -> Unit,
+    onOpenExternalUrl: (String) -> Unit,
     onStockSymbolChanged: (String) -> Unit,
     onQuickTickerSelected: (String) -> Unit,
     onMarketSelected: (MarketType) -> Unit,
@@ -162,6 +183,13 @@ fun CalculatorScreen(
         showSplash = false
     }
 
+    LaunchedEffect(musicSnackbarMessage) {
+        if (!musicSnackbarMessage.isNullOrBlank()) {
+            snackbarHostState.showSnackbar(musicSnackbarMessage)
+            onMusicSnackbarConsumed()
+        }
+    }
+
     LaunchedEffect(uiState.isCalculating, uiState.scrollToResultTrigger) {
         if (uiState.isCalculating || uiState.scrollToResultTrigger > 0) {
             delay(140)
@@ -171,6 +199,13 @@ fun CalculatorScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        // Muted, continuously looping video background
+        MutedLoopingVideoBackground(
+            videoResId = R.raw.bg_video,
+            scrimAlpha = 0.20f,
+            modifier = Modifier.fillMaxSize()
+        )
+
         Scaffold(
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -199,10 +234,6 @@ fun CalculatorScreen(
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
-                    .dottedCanvasBackground(
-                        backgroundColor = neo.canvas,
-                        dotColor = neo.ink
-                    )
                     .padding(innerPadding)
                     .statusBarsPadding()
                     .navigationBarsPadding()
@@ -223,7 +254,11 @@ fun CalculatorScreen(
                             .widthIn(max = if (isWideScreen) 1080.dp else 600.dp),
                         verticalArrangement = Arrangement.spacedBy(18.dp)
                     ) {
-                        NeoHeaderCard()
+                        NeoHeaderCard(
+                            isMusicPlaying = musicState.isPlaying,
+                            savedTrackCount = musicState.tracks.size,
+                            onMusicButtonClick = onOpenMusicSheet
+                        )
                         RegulatorBadgesRow()
 
                         if (isWideScreen && (uiState.result != null || uiState.isCalculating)) {
@@ -358,7 +393,10 @@ fun CalculatorScreen(
                             }
                         }
 
-                        TransparencyNoteBox()
+                        TransparencyNoteBox(
+                            onOpenInstagram = { onOpenExternalUrl(URL_INSTAGRAM_LIWIRYA) },
+                            onOpenGitHub = { onOpenExternalUrl(URL_GITHUB_LIWIRYA) }
+                        )
                         Spacer(modifier = Modifier.height(20.dp))
                     }
                 }
@@ -379,6 +417,21 @@ fun CalculatorScreen(
             onSearchQueryChange = onBrokerSearchQueryChanged,
             onBrokerSelected = onBrokerSelected,
             onDismiss = onDismissBrokerSheet
+        )
+    }
+
+    if (isMusicSheetOpen) {
+        MusicPlayerSheet(
+            state = musicState,
+            onAddMp3Clicked = onAddMp3Clicked,
+            onPlayTrackAt = onPlayTrackAt,
+            onTogglePlayPause = onToggleMusicPlayPause,
+            onNextClicked = onNextTrackClicked,
+            onPreviousClicked = onPreviousTrackClicked,
+            onCycleRepeatMode = onCycleRepeatMode,
+            onSeekTo = onSeekMusicTo,
+            onDeleteTrack = onDeleteTrack,
+            onDismiss = onDismissMusicSheet
         )
     }
 
@@ -414,25 +467,40 @@ fun CalculatorScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun NeoHeaderCard() {
+private fun NeoHeaderCard(
+    isMusicPlaying: Boolean,
+    savedTrackCount: Int,
+    onMusicButtonClick: () -> Unit
+) {
     val neo = LocalNeoBrutalistColors.current
     NeoCard(
         backgroundColor = neo.yellow,
         contentPadding = PaddingValues(18.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Box(
-            modifier = Modifier
-                .background(neo.ink)
-                .padding(horizontal = 10.dp, vertical = 4.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = stringResource(R.string.header_tag),
-                fontFamily = SpaceMonoFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 11.sp,
-                letterSpacing = 1.sp,
-                color = neo.card
+            Box(
+                modifier = Modifier
+                    .background(neo.ink)
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.header_tag),
+                    fontFamily = SpaceMonoFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    letterSpacing = 1.sp,
+                    color = neo.card
+                )
+            }
+            TopRightMusicButton(
+                isPlaying = isMusicPlaying,
+                trackCount = savedTrackCount,
+                onClick = onMusicButtonClick
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -1053,7 +1121,10 @@ private fun BrokerSelectorTrigger(
 }
 
 @Composable
-private fun TransparencyNoteBox() {
+private fun TransparencyNoteBox(
+    onOpenInstagram: () -> Unit,
+    onOpenGitHub: () -> Unit
+) {
     val neo = LocalNeoBrutalistColors.current
     NeoCard(
         backgroundColor = neo.card,
@@ -1083,6 +1154,10 @@ private fun TransparencyNoteBox() {
             fontSize = 12.5.sp,
             lineHeight = 18.sp,
             color = neo.ink
+        )
+        SocialCreditsFooter(
+            onOpenInstagram = onOpenInstagram,
+            onOpenGitHub = onOpenGitHub
         )
     }
 }

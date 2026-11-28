@@ -14,11 +14,12 @@ Aplikasi Android native (**Fee Saham BEI**) untuk simulasi dan verifikasi biaya 
 - **Input Kode / Nama Saham & Pilihan Cepat**: Pengguna dapat memasukkan kode/nama emiten (misalnya `BBCA`, `BBRI`, `IRSX`) atau memilih ticker cepat sehingga hasil keuntungan/kerugian jelas terikat pada saham yang dihitung.
 - **Animasi Loading Candlestick Interaktif**: Dilengkapi animasi pembuka (*splash overlay*) dan animasi kalkulasi grafik *candlestick* naik yang mulus dan selaras dengan tema Neo-Brutalist.
 - **Portfolio Flexing Share Studio & Salin Ringkasan**: Satu ketukan untuk menyalin rincian *Trade Confirmation* ke clipboard atau membuka *Portfolio Flexing* dengan 6 tema kartu HD (`1080×1350`), opsi sembunyikan/tampilkan nominal Rupiah, serta tombol **Simpan ke Galeri**, **Instagram Story**, **WhatsApp**, **Facebook**, dan **Lainnya**.
-- **Desain Neo-Brutalist Responsif & 100% Offline**: Antarmuka tegas berlatar krem bertitik dengan tipografi lokal *Space Grotesk* dan *Space Mono*, mendukung layar ponsel maupun tablet tanpa memerlukan koneksi internet.
+- **Background Video Dinamis & Pemutar Musik MP3**: Latar belakang video penuh layar (*muted* & *auto-loop*) dipadukan dengan pemutar musik MP3 persisten di pojok kanan atas (tambah lagu MP3 tersimpan permanen, *pause/play*, *next/prev*, *repeat*, tetap menyala saat aplikasi diminimalkan, dan otomatis mati saat *Close All*).
+- **Desain Neo-Brutalist Responsif & 100% Offline**: Antarmuka tegas dengan tipografi lokal *Space Grotesk* dan *Space Mono*, logo SPOT Sucor Sekuritas terbundel, tautan sosial Instagram & GitHub pembuat, serta dukungan layar ponsel maupun tablet.
 
 ---
 
-## Daftar Sekuritas & Tarif Fee Terbaru (V2.0)
+## Daftar Sekuritas & Tarif Fee Terbaru (V2.1)
 
 | Kategori | Sekuritas (Kode AB) | Fee Beli | Fee Jual |
 | :--- | :--- | :---: | :---: |
@@ -74,8 +75,8 @@ Aplikasi Android native (**Fee Saham BEI**) untuk simulasi dan verifikasi biaya 
 
 ### A. Unduh APK Langsung (Disarankan untuk Pengguna HP)
 1. Buka halaman **Releases** pada repositori GitHub ini.
-2. Pilih rilis terbaru (**`Kalkulator Fee Saham BEI (V2.0)`**).
-3. Unduh file `.apk` pada bagian **Assets** dan pasang di perangkat Android Anda. *(Catatan: jika sebelumnya pernah memasang versi `V1.0.0`/`V1.0.1` dengan keystore sementara lama, hapus instalasi lama satu kali sebelum memasang `V2.0`; seluruh pembaruan berikutnya akan berjalan mulus tanpa hapus data.)*
+2. Pilih rilis terbaru (**`Kalkulator Fee Saham BEI (V2.1)`**).
+3. Unduh file `.apk` pada bagian **Assets** dan pasang di perangkat Android Anda. *(Catatan: jika sebelumnya pernah memasang versi `V1.0.0`/`V1.0.1` dengan keystore sementara lama, hapus instalasi lama satu kali sebelum memasang `V2.0+`; seluruh pembaruan dari `V2.0` ke `V2.1` dan seterusnya berjalan mulus tanpa hapus data.)*
 
 ### B. Build dari Source Code (Untuk Pengembang)
 1. **Clone repositori ini:**
@@ -108,34 +109,42 @@ Fee-Saham-BEI/
 │   └── workflows/
 │       └── build-apk.yml                # CI/CD otomatis build Debug APK & GitHub Release
 ├── app/
-│   ├── build.gradle.kts                 # Konfigurasi modul Android, versi V2.0 & dependensi
+│   ├── build.gradle.kts                 # Konfigurasi modul Android, versi V2.1 & dependensi
 │   └── src/
 │       ├── main/
 │       │   ├── java/com/example/
-│       │   │   ├── MainActivity.kt                      # Entry point, Clipboard, Galeri & Share Kartu HD
+│       │   │   ├── MainActivity.kt                      # Entry point, Picker MP3, Galeri & Share Kartu HD
 │       │   │   ├── data/
 │       │   │   │   └── BrokerPreferencesRepository.kt   # DataStore broker default + corruption recovery
 │       │   │   ├── domain/
 │       │   │   │   ├── BrokerCatalog.kt                 # Katalog 38 AB OJK + 2 mode Custom
 │       │   │   │   ├── MarketModels.kt                  # Model pasar BEI & tarif regulator
 │       │   │   │   └── StockFeeCalculator.kt            # Mesin kalkulasi presisi & formatter
+│       │   │   ├── music/
+│       │   │   │   ├── MusicModels.kt                   # Model lagu tersimpan, state & mode pengulangan
+│       │   │   │   ├── MusicPlaylistRepository.kt       # Penyimpanan file MP3 internal & DataStore playlist
+│       │   │   │   └── MusicPlaybackService.kt          # Foreground mediaPlayback service (stopWithTask=true)
 │       │   │   ├── presentation/
 │       │   │   │   └── CalculatorViewModel.kt           # StateFlow, kode saham, loading & share state
 │       │   │   └── ui/
-│       │   │       ├── CalculatorScreen.kt              # Layar utama Neo-Brutalist adaptif
+│       │   │       ├── CalculatorScreen.kt              # Layar utama Neo-Brutalist + video background
 │       │   │       ├── components/
-│       │   │       │   ├── BrokerLogo.kt                # Pemuat ikon resmi sekuritas (Coil + fallback)
+│       │   │       │   ├── BrokerLogo.kt                # Ikon sekuritas (Coil + logo SPOT Sucor lokal)
 │       │   │       │   ├── BrokerPickerSheet.kt         # Modal pencarian cepat 38 broker
 │       │   │       │   ├── FlexingShareSheet.kt         # Modal Portfolio Flexing (6 tema & 5 tombol bagikan)
+│       │   │       │   ├── MusicPlayerSheet.kt          # Modal pemutar musik MP3 & kelola daftar lagu
 │       │   │       │   ├── NeoBrutalistPrimitives.kt    # Komponen kartu, tombol & input
 │       │   │       │   ├── ResultSections.kt            # Kartu Net RDN & Trade Confirmation
 │       │   │       │   ├── ShareCardModels.kt           # Model tema & tujuan bagikan kartu
 │       │   │       │   ├── ShareCardRenderer.kt         # Renderer Canvas HD 1080×1350, MediaStore & FileProvider
-│       │   │       │   └── StockLoadingAnimation.kt     # Animasi Candlestick Splash & Calculating
+│       │   │       │   ├── SocialAndMusicDecor.kt       # Tombol musik kanan atas & footer Instagram/GitHub
+│       │   │       │   ├── StockLoadingAnimation.kt     # Animasi Candlestick Splash & Calculating
+│       │   │       │   └── VideoBackground.kt           # Pemutar video latar belakang muted & auto-loop
 │       │   │       └── theme/                           # Color, Typography & Neo-Brutalist Theme
 │       │   └── res/
 │       │       ├── font/                                # Space Grotesk & Space Mono (.ttf lokal)
-│       │       ├── drawable/ & mipmap-*/                # Ikon launcher adaptif kustom
+│       │       ├── raw/bg_video.mp4                     # Video latar belakang looping tanpa suara
+│       │       ├── drawable/ & mipmap-*/                # Ikon launcher V2.1 & logo SPOT Sucor Sekuritas
 │       │       ├── xml/file_paths.xml                   # FileProvider cache path untuk share gambar
 │       │       └── values/strings.xml                   # Resource teks Bahasa Indonesia
 │       └── test/java/com/example/
@@ -172,6 +181,13 @@ Misalkan Anda membeli saham **BBCA** pada **Pasar Reguler (RG)** dengan rincian 
 ---
 
 ## Riwayat Pembaruan (Changelog)
+
+### `V2.1`
+- **Revisi Branding & Versi**: Loading screen menampilkan `CREDIT BY LIWIRYA` / `VERSION: 2.1`, tag header utama menjadi `CREATED BY LIWIRYA`, subjudul menjadi `Perhitungan Trade Fee`, serta watermark kartu bagikan menjadi `CREDIT BY LIWIRYA`.
+- **Ikon Aplikasi & Logo Sucor Sekuritas Baru**: Pembaruan ikon launcher adaptif modern serta penggantian ikon **Sucor Sekuritas (AZ)** menggunakan logo resmi **SPOT**.
+- **Background Video Looping Tanpa Suara**: Penambahan latar belakang video penuh layar yang otomatis berjalan terus-menerus dalam kondisi bisu (*muted*).
+- **Pemutar Musik MP3 Persisten**: Tombol musik di pojok kanan atas untuk menambahkan & menyimpan file MP3 lokal, kontrol *play/pause*, *next/prev*, *repeat*, *seekbar*, tetap menyala saat aplikasi diminimalkan, dan otomatis berhenti saat aplikasi ditutup penuh (*Close All*).
+- **Footer Sosial & Kredit**: Penambahan ikon Instagram (`mynameisliwirya`), ikon GitHub (`liwirya`), dan teks `CREDIT BY LIWIRYA - THANKS FOR USED` di bawah kartu *Transparansi Perhitungan*.
 
 ### `V2.0`
 - **Perbaikan Konflik Update APK**: Menggunakan *keystore* konsisten (`debug.keystore.base64`) pada build GitHub Actions serta menambahkan `ReplaceFileCorruptionHandler` pada DataStore agar pembaruan APK ke versi berikutnya berjalan mulus tanpa gagal pasang atau bentrok data.

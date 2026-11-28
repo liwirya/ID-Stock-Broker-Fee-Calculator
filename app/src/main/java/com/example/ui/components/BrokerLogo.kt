@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -41,6 +42,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.example.R
 import com.example.domain.Broker
 import com.example.ui.theme.LocalNeoBrutalistColors
 import com.example.ui.theme.SpaceMonoFontFamily
@@ -106,7 +108,7 @@ private fun brandIdentityFor(brokerId: String): BrokerBrandIdentity = when (brok
     "sinarmas" -> BrokerBrandIdentity(Color(0xFFDC2626), Color(0xFFFFFFFF), Color(0xFFFFFFFF), BrokerSymbol.SUN_HORIZON)
     "lotus" -> BrokerBrandIdentity(Color(0xFFBE185D), Color(0xFFF9A8D4), Color(0xFFFFFFFF), BrokerSymbol.LOTUS_PETAL)
     "kbvalbury" -> BrokerBrandIdentity(Color(0xFFF59E0B), Color(0xFF451A03), Color(0xFF111111), BrokerSymbol.SHIELD_CREST)
-    "sucor" -> BrokerBrandIdentity(Color(0xFF15803D), Color(0xFFBEF264), Color(0xFFFFFFFF), BrokerSymbol.CANDLE_UP)
+    "sucor" -> BrokerBrandIdentity(Color(0xFFEA580C), Color(0xFFFFFFFF), Color(0xFFFFFFFF), BrokerSymbol.CANDLE_UP)
     "rhb" -> BrokerBrandIdentity(Color(0xFF0284C7), Color(0xFFBAE6FD), Color(0xFFFFFFFF), BrokerSymbol.WAVE_RIBBON)
     "samuel" -> BrokerBrandIdentity(Color(0xFF1D4ED8), Color(0xFFFACC15), Color(0xFFFFFFFF), BrokerSymbol.SPARK_STAR)
     "yuanta" -> BrokerBrandIdentity(Color(0xFF0369A1), Color(0xFF38BDF8), Color(0xFFFFFFFF), BrokerSymbol.HEX_NODE)
@@ -145,13 +147,19 @@ fun BrokerLogoEmblem(
     val iconUrls = remember(broker.id, broker.websiteDomain, broker.fallbackDomain) {
         buildOfficialIconUrls(broker)
     }
+    val localDrawableRes = remember(broker.id) {
+        when (broker.id) {
+            "sucor" -> R.drawable.ic_broker_sucor
+            else -> null
+        }
+    }
     var attemptIndex by remember(broker.id) { mutableIntStateOf(0) }
     val currentUrl = iconUrls.getOrNull(attemptIndex)
 
     Column(
         modifier = modifier
             .size(size)
-            .background(if (currentUrl != null) neo.card else identity.bgColor)
+            .background(if (localDrawableRes != null || currentUrl != null) neo.card else identity.bgColor)
             .border(BorderStroke(2.dp, neo.ink)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -161,7 +169,22 @@ fun BrokerLogoEmblem(
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            if (currentUrl != null) {
+            if (localDrawableRes != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .padding(2.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = localDrawableRes),
+                        contentDescription = "Logo ${broker.name}",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            } else if (currentUrl != null) {
                 val imageRequest = remember(currentUrl) {
                     ImageRequest.Builder(context)
                         .data(currentUrl)

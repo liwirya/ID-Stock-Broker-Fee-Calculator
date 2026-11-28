@@ -248,7 +248,7 @@ object ShareCardRenderer {
             textSize = 20f
         }
         canvas.drawText("Fee Saham BEI", x + iconSize + 20f, y + 32f, titlePaint)
-        canvas.drawText("OJK • BEI • KPEI • KSEI", x + iconSize + 20f, y + 60f, subPaint)
+        canvas.drawText("CREDIT BY LIWIRYA", x + iconSize + 20f, y + 60f, subPaint)
     }
 
     private fun drawCandleDarkBackdrop(canvas: Canvas, isProfit: Boolean) {
